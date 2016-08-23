@@ -32,9 +32,6 @@ public class ProblemParser {
 	public static String TRANSPORT_FILE_EXTENSION = "transport";
 	public static String CONFIG_FILE_EXTENSION = "properties";
 
-	public static final String SEARCH_TYPE_KEY = "SubgradientSearch.SearchType";
-	public static final String SEARCH_NR_TIME_SLOTS_KEY = "SubgradientSearch.NrTimeSlots";
-	public static final String TRANSPORT_FILE_KEY = "SubgradientSearch.TransportFile";
 
 	// fjs file to pares
 	File problemFile;
