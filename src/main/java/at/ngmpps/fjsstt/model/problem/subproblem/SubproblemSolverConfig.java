@@ -29,7 +29,7 @@ public class SubproblemSolverConfig implements Serializable {
 	 * neighbourhood search.
 	 */
 	private SubproblemSolverType type;
-
+ 
 	String confString;
 	/**
 	 * VNS config parameter, see {@link VNS_subproblem#iterations}
