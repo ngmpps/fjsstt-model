@@ -132,6 +132,7 @@ public class SubproblemInstance implements Serializable {
 	 */
 	public double calcAugmentedCost(final Objective objective, final Bid bid, final double[][] multipliers) {
 		double cost = 0;
+		this.multipliers = multipliers;
 
 		// calculate machine utilisation costs, sum over all operations
 		for (int op = 0; op < operations; op++) {
@@ -178,6 +179,7 @@ public class SubproblemInstance implements Serializable {
 	 */
 	public double calcCost(final Objective objective, final Bid bid, final double[][] multipliers) {
 		double cost = 0;
+		this.multipliers = multipliers;
 
 		// calculate machine utilisation costs, sum over all operations
 		for (int op = 0; op < operations; op++) {
