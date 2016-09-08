@@ -282,7 +282,7 @@ public class ProblemParser {
 	public static double getPropertyDouble(Properties config, String key, Double defaultVal) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
-			if (prop == null || prop.isEmpty()) {
+			if (prop != null && !prop.isEmpty()) {
 				return Double.parseDouble(trimm(prop));
 			}
 		}
@@ -298,7 +298,7 @@ public class ProblemParser {
 		if (config.containsKey(key)) {
 
 			String prop = config.getProperty(key);
-			if (prop == null || prop.isEmpty()) {
+			if (prop != null && !prop.isEmpty()) {
 				return Integer.parseInt(trimm(prop));
 			}
 		}
@@ -313,7 +313,7 @@ public class ProblemParser {
 	public static String getPropertyString(Properties config, String key, String defaultVal) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
-			if (prop == null || prop.isEmpty()) {
+			if (prop != null && !prop.isEmpty()) {
 				logger.error("Property Key {} is empty in Config {}.", key, config.toString());
 				return "";
 			}
