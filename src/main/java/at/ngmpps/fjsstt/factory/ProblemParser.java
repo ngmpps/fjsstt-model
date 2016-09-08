@@ -260,57 +260,68 @@ public class ProblemParser {
 	public static List<File> findTransportFiles(File problemFilePath) throws IOException {
 		return findFiles(problemFilePath, TRANSPORT_FILE_EXTENSION);
 	}
-
-	public static boolean getPropertyBool(Properties config, String key) {
+	public static boolean getPropertyBool(Properties config, String key){
+		return getPropertyBool(config, key, null);
+	}
+	public static boolean getPropertyBool(Properties config, String key, Boolean defaultval) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
-			if (prop == null || prop.isEmpty()) {
-				logger.error("Property Key {0} is empty in Config {1}.", key, config.toString());
-				return false;
+			if (prop != null && !prop.isEmpty()) {
+					return Boolean.parseBoolean(trimm(config.getProperty(key)));
 			}
-			return Boolean.parseBoolean(trimm(config.getProperty(key)));
 		}
-		logger.error("Property Key {0} not found in Config {1}.", key, config.toString());
+		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
+		if(defaultval!=null)
+			return defaultval;
 		return false;
 	}
 
-	public static double getPropertyDouble(Properties config, String key) {
+	public static double getPropertyDouble(Properties config, String key){
+		return getPropertyDouble(config,key,null);
+	}
+	public static double getPropertyDouble(Properties config, String key, Double defaultVal) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
 			if (prop == null || prop.isEmpty()) {
-				logger.error("Property Key {0} is empty in Config {1}.", key, config.toString());
-				return 0.0;
+				return Double.parseDouble(trimm(prop));
 			}
-			return Double.parseDouble(trimm(prop));
 		}
-		logger.error("Property Key {0} not found in Config {1}.", key, config.toString());
+		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
+		if(defaultVal!=null)
+			return defaultVal;
 		return 0.0;
 	}
-
 	public static int getPropertyInt(Properties config, String key) {
+		return getPropertyInt(config,key,null);
+	}
+	public static int getPropertyInt(Properties config, String key,Integer defaultVal) {
 		if (config.containsKey(key)) {
 
 			String prop = config.getProperty(key);
 			if (prop == null || prop.isEmpty()) {
-				logger.error("Property Key {0} is empty in Config {1}.", key, config.toString());
-				return 0;
+				return Integer.parseInt(trimm(prop));
 			}
-			return Integer.parseInt(trimm(prop));
 		}
-		logger.error("Property Key {0} not found in Config {1}.", key, config.toString());
+		logger.error("Property Key {} not found or emtpy in Config {}.", key, config.toString());
+		if(defaultVal!=null)
+			return defaultVal;
 		return 0;
 	}
-
 	public static String getPropertyString(Properties config, String key) {
+		return getPropertyString(config,key,null);
+	}
+	public static String getPropertyString(Properties config, String key, String defaultVal) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
 			if (prop == null || prop.isEmpty()) {
-				logger.error("Property Key {0} is empty in Config {1}.", key, config.toString());
+				logger.error("Property Key {} is empty in Config {}.", key, config.toString());
 				return "";
 			}
 			return trimm(config.getProperty(key));
 		}
-		logger.error("Property Key {0} not found in Config {1}.", key, config.toString());
+		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
+		if(defaultVal!=null)
+			return defaultVal;
 		return "";
 	}
 
