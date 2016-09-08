@@ -368,8 +368,8 @@ public class ProblemParser {
 		return getPropertyInt(configuration, key, defaultVal);
 	}
 
-	public int getPropertyString(String key) {
-		return getPropertyInt(key, null);
+	public String getPropertyString(String key) {
+		return getPropertyString(key, null);
 	}
 
 	public String getPropertyString(String key, String defaultVal) {
