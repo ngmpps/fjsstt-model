@@ -51,7 +51,7 @@ public class Solution implements Serializable {
 	 * The vector of strictly positive Lagrange multipliers that led to the
 	 * solution.
 	 */
-	final double[][][] multipliersPerJob;
+	final double[][] multipliers;
 	
 	/**
 	 * Nr of Jobs
@@ -75,7 +75,7 @@ public class Solution implements Serializable {
 	
 
 	public Solution() {
-		multipliersPerJob = new double[0][][];
+		multipliers = new double[0][];
 		subgradients = new int[0][];
 		operationsMachineAssignments = new int[0][];
 		operationsBeginTimes = new int[0][];
@@ -93,7 +93,7 @@ public class Solution implements Serializable {
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int jobs, final int maxOperationsPerJob, final Bid[] bids, final int iteration,
-			final int[][] subgradients, final double[][][] multipliersPerJob) {
+			final int[][] subgradients, final double[][] multipliers) {
 		this.objectiveValue = objectiveValue;
 		this.bids = bids;
 		this.iteration = iteration;
@@ -105,7 +105,7 @@ public class Solution implements Serializable {
 
 		this.operationsBeginTimes = new int[jobs][maxOperationsPerJob];
 		this.operationsMachineAssignments = new int[jobs][maxOperationsPerJob];
-		this.multipliersPerJob = new double[jobs][machines][timeslots];
+		this.multipliers = new double[machines][timeslots];
 
 		// for all jobs and operations: compile the arrays for optimal machine
 		// assignments and completion times for operations
@@ -120,11 +120,9 @@ public class Solution implements Serializable {
 			}
 		} 
 
-		if (multipliersPerJob != null) {
-			for(int j=0;j<jobs;++j) {
-				for (int m = 0; m < machines; m++) {
-					System.arraycopy(multipliersPerJob[j][m], 0, this.multipliersPerJob[j][m], 0, multipliersPerJob[j][m].length);
-				}
+		if (multipliers != null) {
+			for (int m = 0; m < machines; m++) {
+				System.arraycopy(multipliers[m], 0, multipliers[m], 0, multipliers[m].length);
 			}
 		}
 	}
@@ -149,7 +147,7 @@ public class Solution implements Serializable {
 		this.operationsBeginTimes = begTimes;
 		this.operationsMachineAssignments = machAss;
 		this.subgradients = null;
-		this.multipliersPerJob = null;
+		this.multipliers = null;
 	}
 
 	public Solution clone() {
@@ -202,8 +200,8 @@ public class Solution implements Serializable {
 		return iteration;
 	}
 
-	public double[][][] getMultipliersPerJob() {
-		return multipliersPerJob;
+	public double[][] getMultipliers() {
+		return multipliers;
 	}
 
 	/**
@@ -259,7 +257,7 @@ public class Solution implements Serializable {
 				", operationsMachineAssignments=" + Arrays.toString(operationsMachineAssignments) +
 				", iteration=" + iteration +
 				", subgradients=" + Arrays.toString(subgradients) +
-				", multipliers=" + Arrays.toString(multipliersPerJob) +
+				", multipliers=" + Arrays.toString(multipliers) +
 				'}';
 	}
 }
