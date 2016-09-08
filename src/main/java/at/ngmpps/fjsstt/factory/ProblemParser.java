@@ -346,19 +346,34 @@ public class ProblemParser {
 	}
 
 	public boolean getPropertyBool(String key) {
-		return getPropertyBool(configuration, key);
+		return getPropertyBool(key, null);
+	}
+	public boolean getPropertyBool(String key, Boolean defaultVal) {
+		return getPropertyBool(configuration, key, defaultVal);
 	}
 
 	public double getPropertyDouble(String key) {
-		return getPropertyDouble(configuration, key);
+		return getPropertyDouble(key, null);
+	}
+	
+	public double getPropertyDouble(String key, Double defaultVal) {
+		return getPropertyDouble(configuration, key, defaultVal);
 	}
 
 	public int getPropertyInt(String key) {
-		return getPropertyInt(configuration, key);
+		return getPropertyInt(key, null);
 	}
 
-	public String getPropertyString(String key) {
-		return getPropertyString(configuration, key);
+	public int getPropertyInt(String key, Integer defaultVal) {
+		return getPropertyInt(configuration, key, defaultVal);
+	}
+
+	public int getPropertyString(String key) {
+		return getPropertyInt(key, null);
+	}
+
+	public String getPropertyString(String key, String defaultVal) {
+		return getPropertyString(configuration, key, defaultVal);
 	}
 
 	/**
