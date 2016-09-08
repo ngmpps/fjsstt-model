@@ -314,10 +314,8 @@ public class ProblemParser {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
 			if (prop != null && !prop.isEmpty()) {
-				logger.error("Property Key {} is empty in Config {}.", key, config.toString());
-				return "";
+				return trimm(config.getProperty(key));
 			}
-			return trimm(config.getProperty(key));
 		}
 		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
 		if(defaultVal!=null)
