@@ -136,6 +136,27 @@ public class ProblemParser {
 		final ProblemParser parse = new ProblemParser();
 		return parse.parseConfigProblem(new File(filename));
 	}
+	
+	/**
+	 * use this method for generating a problem if you have the content of the required files (ie you don't need to load from disk)
+	 * @param problemContent
+	 * @param configContent
+	 * @param transportContent
+	 * @return
+	 */
+	public static FJSSTTproblem parseStrings(String problemContent, String configContent, String transportContent) {
+		final ProblemParser parse = new ProblemParser();
+		try {
+			parse.parseProblem(problemContent);
+			if(configContent!=null && configContent.isEmpty())
+				parse.parseConfiguration(configContent);
+			if(transportContent!=null && !transportContent.isEmpty() )
+				parse.parseTransportTimesString(transportContent);
+		} catch(Exception e) {
+			logger.error(e.getClass().getName()+": "+e.getMessage());
+		}
+		return parse.getProblem();
+	}
 
 	/**
 	 * Checks if the Given File is OK or if not searches for that file
