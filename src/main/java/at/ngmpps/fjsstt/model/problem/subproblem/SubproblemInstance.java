@@ -3,6 +3,7 @@ package at.ngmpps.fjsstt.model.problem.subproblem;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public class SubproblemInstance implements Serializable {
 	 * The sets of alternative machines per operation. A key is an operation, the
 	 * corresponding value is the set of alternative machines.
 	 */
-	HashMap<Integer, List<Integer>> altMachines;
+	Map<Integer, List<Integer>> altMachines;
 
 	/**
 	 * The process times of operations on machines. The first index is the
@@ -98,7 +99,7 @@ public class SubproblemInstance implements Serializable {
 	}
 
 	public SubproblemInstance(final int id, final int operations, final int machines, final int timeslots,
-			final HashMap<Integer, List<Integer>> altMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate,
+			final Map<Integer, List<Integer>> altMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate,
 			final int jobWeight, final Objective objective) {
 		this.jobID = id;
 		this.operations = operations;
@@ -271,7 +272,7 @@ public class SubproblemInstance implements Serializable {
 		setMultipliers(lambda);
 	}
 
-	public HashMap<Integer, List<Integer>> getAltMachines() {
+	public Map<Integer, List<Integer>> getAltMachines() {
 		return altMachines;
 	}
 
