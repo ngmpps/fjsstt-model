@@ -460,7 +460,13 @@ public class FJSSTTproblem implements Serializable {
 		problemId = id;
 	}
 	
+	/**
+	 * returns the prblem ID; if non is set, one is generated on the fly
+	 * @return
+	 */
 	public int getProblemId(){
+		if(problemId==-1)
+			problemId = super.hashCode();
 		return problemId;
 	}
 
