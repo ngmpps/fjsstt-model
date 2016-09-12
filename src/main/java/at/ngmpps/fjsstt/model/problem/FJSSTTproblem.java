@@ -37,7 +37,7 @@ public class FJSSTTproblem implements Serializable {
 	public enum Objective {
 		COMPLETION_TIME, TARDINESS
 	}
-
+	
 	/**
 	 * The number of jobs. The set of jobs is {0,...,mJobs-1};
 	 */
@@ -102,6 +102,10 @@ public class FJSSTTproblem implements Serializable {
 
 	Properties configurations = null;
 
+	int problemId = -1;
+
+
+	
 	/**
 	 * Creates an instance of the FJSSTT problem.
 	 * 
@@ -450,6 +454,14 @@ public class FJSSTTproblem implements Serializable {
 
 	public int[][] getTravelTimes() {
 		return travelTimes;
+	}
+	
+	public void setProblemId(int id){
+		problemId = id;
+	}
+	
+	public int getProblemId(){
+		return problemId;
 	}
 
 	public void printMatrix(int[][] matrix) {
