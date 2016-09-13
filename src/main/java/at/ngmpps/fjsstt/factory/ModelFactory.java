@@ -90,16 +90,16 @@ public class ModelFactory {
 						+ "5;5;5;11;0;11;5;5;11;8;8;4;4;3;6;0;0;6;3;3;6;4;4;6;4;6;0;11\n"
 						+ "22;22;22;0;11;0;22;22;0;18;18;6;6;7;14;11;11;15;7;7;15;6;6;14;6;14;11;0\n",
 
-				"SimpleSearch.Alpha=2.0\n" + "SubgradientSearch.TransportFile=\n" + "SubproblemSolver.LS_iterations=150\n"
+				"SimpleSearch.Alpha=2.0\n" + "#SubgradientSearch.TransportFile=\n" + "SubproblemSolver.LS_iterations=150\n"
 						+ "SubproblemSolver.MinMaxSlack=5\n" + "SimpleSearch.UpperBoundary=138\n" + "SurrogateSearch.R=0.1\n"
-						+ "SubgradientSearch.NrTimeSlots= 500\n" + "SurrogateSearch.M=25\n"
+						+ "SubgradientSearch.NrTimeSlots=800\n" + "SurrogateSearch.M=25\n"
 						+ "SurrogateSearch.IterationsUntilFeasibilityRepair=2\n" + "SubproblemSolver.VNSiterations=100\n"
 						+ "SubproblemSolver.MaxShakingDistance=3\n" + "SurrogateSearch.NoSubproblems=10\n"
 						+ "SurrogateSearch.FixedInitialStepsize=true\n" + "SurrogateSearch.EstimatedOptimalDualCost=-1\n"
 						+ "SurrogateSearch.InitialStepsize=0.2\n" + "SubgradientSearch.SearchType=Both\n"
 						+ "SubproblemSolver.type=VariableNeighbourhoodSearch\n" + "SimpleSearch.IterationsUntilHalvingAlpha=20\n"
 						+ "SubproblemSolver.LS_altMachine_tries=1\n" + "SurrogateSearch.NrRuns=10\n" + "SubproblemSolver.MinMaxShiftDistance=50\n"
-						+ "SimpleSearch.IterationsUntilFeasibilityRepair=2");
+						+ "SimpleSearch.IterationsUntilFeasibilityRepair=2\n");
 		return ps;
 	}
 
