@@ -159,7 +159,7 @@ public class ProblemParser {
 		final ProblemParser parse = new ProblemParser();
 		try {
 			parse.parseProblem(problemContent);
-			if(configContent!=null && configContent.isEmpty())
+			if(configContent!=null && !configContent.isEmpty())
 				parse.parseConfiguration(configContent);
 			if(transportContent!=null && !transportContent.isEmpty() )
 				parse.parseTransportTimesString(transportContent);
