@@ -138,17 +138,14 @@ public class ProblemParser {
 	}
 	
 	
-	public static FJSSTTproblem parseFiles(String problemFile, String configFile, String transportFile) {
+	public static FJSSTTproblem parseFiles(String problemFile, String configFile, String transportFile) throws URISyntaxException, IOException {
 		final ProblemParser parse = new ProblemParser();
-		try {
 			parse.parseProblemFileOnly(new File(problemFile));
-			if(configFile!=null && configFile.isEmpty())
+			if(configFile!=null && !configFile.isEmpty()) {
 				parse.parseConfigurationFile(new File(configFile));
+			}
 			if(transportFile!=null && !transportFile.isEmpty())
 				parse.parseTransportTimes(new File(transportFile));
-		} catch(Exception e) {
-			logger.error(e.getClass().getName()+": "+e.getMessage());
-		}
 		return parse.getProblem();
 	}
 	/**
