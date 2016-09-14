@@ -49,6 +49,10 @@ public class SolutionSet {
     private Double objectiveValue;
 
 
+    public SolutionSet(){
+   	 
+    }
+    
     public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution s) {
    	 this("Soltion for Problem with id " + p.hashCode(),
    			 p.getFjs(),
@@ -127,6 +131,9 @@ public class SolutionSet {
         this.solution = solution;
     }
 
+    public void setObjectiveValue(Double obj) {
+   	 this.objectiveValue = obj;
+    }
 
     @Override
     public String toString() {
