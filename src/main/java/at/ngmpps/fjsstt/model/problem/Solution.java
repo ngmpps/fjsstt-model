@@ -2,8 +2,6 @@ package at.ngmpps.fjsstt.model.problem;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import at.ngmpps.fjsstt.model.problem.subproblem.Bid;
 
@@ -74,11 +72,16 @@ public class Solution implements Serializable {
 	int maxOperationsPerJob;
 	
 
-	public Solution() {
-		multipliers = new double[0][];
+	public Solution(final int machines, final int timeslots, final int jobs, final int maxOperationsPerJob) {
+		this.jobs = jobs;
+		this.machines = machines;
+		this.timeslots = timeslots;
+		this.maxOperationsPerJob = maxOperationsPerJob;
+
+		operationsBeginTimes = new int[jobs][maxOperationsPerJob];
+		operationsMachineAssignments = new int[jobs][maxOperationsPerJob];
+		multipliers = new double[machines][timeslots];
 		subgradients = new int[0][];
-		operationsMachineAssignments = new int[0][];
-		operationsBeginTimes = new int[0][];
 		bids = new Bid[0];
 		objectiveValue = Double.NEGATIVE_INFINITY;
 	}

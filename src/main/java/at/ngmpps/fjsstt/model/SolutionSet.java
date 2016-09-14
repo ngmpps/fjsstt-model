@@ -1,6 +1,10 @@
 package at.ngmpps.fjsstt.model;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import at.ngmpps.fjsstt.model.problem.FJSSTTproblem;
+import at.ngmpps.fjsstt.model.problem.Solution;
 
 /**
  *
@@ -40,16 +44,28 @@ public class SolutionSet {
     private Map<String, String> solution;
 
     /**
-     * The lower bound of the solution (e.g. 537.5, 537.7)
+     * The objective value of a solution
      */
-    private Double lowerBound;
+    private Double objectiveValue;
 
-    /**
-     * The upper bound of the solution (e.g. 541)
-     */
-    private Double upperBound;
 
-    public SolutionSet() {
+    public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution s) {
+   	 this("Soltion for Problem with id " + p.hashCode(),
+   			 p.getFjs(),
+   			 p.getTransport(),
+   			 p.getProperties(),
+   			 new HashMap<String,String>(), // do solution object below
+   			 s.getObjectiveValue());
+   	 for(int i=0;i<s.getOperationsBeginTimes().length;++i) {
+   		 StringBuilder sb = new StringBuilder();
+   		 for(int j=0;j<s.getOperationsBeginTimes()[i].length;++j) {
+   			 //.append(j) do not need the operation just its begin tim
+      		 sb.append("(").append(s.getOperationsBeginTimes()[i][j]).append(",")
+      		 .append(s.getOperationsMachineAssignments()[i][j]).append(",")
+      		 .append(fjp.getProcessTimes()[i][j][s.getOperationsMachineAssignments()[i][j]]).append(")");
+   		 }
+   		 solution.put("Job"+i, sb.toString());
+   	 }
     }
 
     public SolutionSet(String name,
@@ -57,16 +73,14 @@ public class SolutionSet {
    		 				  String problemTransport,
    		 				  String problemConfig, 
                        Map<String, String> solution,
-                       Double lowerBound,
-                       Double upperBound) {
+                       Double objectiveVal) {
 
         this.name = name;
         this.problemFJS = problemFJS;
         this.problemTransport = problemTransport;
         this.problemConfig = problemConfig;
         this.solution = solution;
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+        this.objectiveValue=objectiveVal;
     }
 
     public String getName() {
@@ -89,12 +103,8 @@ public class SolutionSet {
         return solution;
     }
 
-    public Double getLowerBound() {
-        return lowerBound;
-    }
-
-    public Double getUpperBound() {
-        return upperBound;
+    public Double getObjectiveValue() {
+        return objectiveValue;
     }
 
     public void setName(String name) {
@@ -117,13 +127,6 @@ public class SolutionSet {
         this.solution = solution;
     }
 
-    public void setLowerBound(Double lowerBound) {
-        this.lowerBound = lowerBound;
-    }
-
-    public void setUpperBound(Double upperBound) {
-        this.upperBound = upperBound;
-    }
 
     @Override
     public String toString() {
@@ -133,8 +136,7 @@ public class SolutionSet {
                 ", problemTransport='" + problemTransport + '\'' +
                 ", problemConfig='" + problemConfig + '\'' +
                 ", solution=" + solution +
-                ", lowerBound=" + lowerBound +
-                ", upperBound=" + upperBound +
+                ", objectiveValue=" + objectiveValue +
                 '}';
     }
 }
