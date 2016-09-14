@@ -17,6 +17,8 @@ public class SubproblemSolverConfig implements Serializable {
 	private static final long serialVersionUID = 3512198032457722173L;
 
 	public static final String TYPE_KEY = "SubproblemSolver.type";
+	public static final String TYPE_VNS = SubproblemSolverType.VariableNeighbourhoodSearch.name();//"VariableNeighbourhoodSearch";
+	public static final String TYPE_DP = SubproblemSolverType.DynamicProgramming.name();//"DynamicProgramming";
 	public static final String VNS_ITERATIONS_KEY = "SubproblemSolver.VNSiterations";
 	public static final String MAX_SHAKING_DISTANCE_KEY = "SubproblemSolver.MaxShakingDistance";
 	public static final String LS_ITERATIONS_KEY = "SubproblemSolver.LS_iterations";
