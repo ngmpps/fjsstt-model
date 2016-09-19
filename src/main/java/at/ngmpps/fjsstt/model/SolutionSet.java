@@ -71,7 +71,7 @@ public class SolutionSet {
    		 s=maxLowerBound;
    	 for(int i=0;i<s.getOperationsBeginTimes().length;++i) {
    		 StringBuilder sb = new StringBuilder();
-   		 for(int j=0;j<s.getOperationsBeginTimes()[i].length;++j) {
+   		 for(int j=0;j < s.getOperationsBeginTimes()[i].length && j < fjp.getProcessTimes()[i].length;++j) {
    			 int maschine = s.getOperationsMachineAssignments()[i][j];
    			 //.append(j) do not need the operation just its begin tim
       		 sb.append("(").append(s.getOperationsBeginTimes()[i][j]).append(",")
