@@ -44,29 +44,39 @@ public class SolutionSet {
     private Map<String, String> solution;
 
     /**
-     * The objective value of a solution
+     * The known best feasible Solution
      */
-    private Double objectiveValue;
+    private Double minUpperBoundSolution;
+
+    /**
+     * The known best infeasible Solution
+     */
+    private Double maxLowerBoundSolution;
 
 
     public SolutionSet(){
    	 
     }
     
-    public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution s) {
+    public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution minUpperBound, Solution maxLowerBound) {
    	 this("Soltion for Problem with id " + p.hashCode(),
    			 p.getFjs(),
    			 p.getTransport(),
    			 p.getProperties(),
    			 new HashMap<String,String>(), // do solution object below
-   			 s.getObjectiveValue());
+   			 minUpperBound!=null?minUpperBound.getObjectiveValue():Double.NEGATIVE_INFINITY,
+				 maxLowerBound!=null?maxLowerBound.getObjectiveValue():Double.NEGATIVE_INFINITY);
+   	 Solution s = minUpperBound;
+   	 if(s==null)
+   		 s=maxLowerBound;
    	 for(int i=0;i<s.getOperationsBeginTimes().length;++i) {
    		 StringBuilder sb = new StringBuilder();
    		 for(int j=0;j<s.getOperationsBeginTimes()[i].length;++j) {
+   			 int maschine = s.getOperationsMachineAssignments()[i][j];
    			 //.append(j) do not need the operation just its begin tim
       		 sb.append("(").append(s.getOperationsBeginTimes()[i][j]).append(",")
-      		 .append(s.getOperationsMachineAssignments()[i][j]).append(",")
-      		 .append(fjp.getProcessTimes()[i][j][s.getOperationsMachineAssignments()[i][j]]).append(")");
+      		 .append(maschine).append(",")
+      		 .append(fjp.getProcessTimes()[i][j].length>maschine?fjp.getProcessTimes()[i][j][maschine]:"??").append(")");
    		 }
    		 solution.put("Job"+i, sb.toString());
    	 }
@@ -77,14 +87,16 @@ public class SolutionSet {
    		 				  String problemTransport,
    		 				  String problemConfig, 
                        Map<String, String> solution,
-                       Double objectiveVal) {
+                       Double minUpperBound,
+                       Double maxLowerBound) {
 
         this.name = name;
         this.problemFJS = problemFJS;
         this.problemTransport = problemTransport;
         this.problemConfig = problemConfig;
         this.solution = solution;
-        this.objectiveValue=objectiveVal;
+        this.minUpperBoundSolution = minUpperBound;
+        this.maxLowerBoundSolution = maxLowerBound;
     }
 
     public String getName() {
@@ -107,9 +119,13 @@ public class SolutionSet {
         return solution;
     }
 
-    public Double getObjectiveValue() {
-        return objectiveValue;
+    public Double getMinUpperBoundSolution() {
+        return minUpperBoundSolution;
     }
+
+    public Double getMaxLowerBoundSolution() {
+       return maxLowerBoundSolution;
+   }
 
     public void setName(String name) {
         this.name = name;
@@ -131,8 +147,11 @@ public class SolutionSet {
         this.solution = solution;
     }
 
-    public void setObjectiveValue(Double obj) {
-   	 this.objectiveValue = obj;
+    public void setMinUpperBoundSolution(Double obj) {
+   	 this.minUpperBoundSolution = obj;
+    }
+    public void setMaxLowerBoundSolution(Double obj) {
+   	 this.maxLowerBoundSolution = obj;
     }
 
     @Override
@@ -142,8 +161,9 @@ public class SolutionSet {
                 ", problemFJS='" + problemFJS + '\'' +
                 ", problemTransport='" + problemTransport + '\'' +
                 ", problemConfig='" + problemConfig + '\'' +
-                ", solution=" + solution +
-                ", objectiveValue=" + objectiveValue +
+                ", solution=\'" + solution + '\'' +
+                ", minUpperBound=\'" + minUpperBoundSolution + '\'' +
+                ", maxLowerBound=\'" + maxLowerBoundSolution + '\'' +
                 '}';
     }
 }

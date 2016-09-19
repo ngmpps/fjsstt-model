@@ -127,7 +127,7 @@ public class ModelFactory {
 
 	public static SolutionSet createSrfgSolutionSet(ProblemSet problem) {
 		final SolutionSet ss = new SolutionSet("Algorithmus 1", problem.getFjs(), problem.getTransport(), problem.getProperties(), mySolution,
-				537.5);
+				537.5, 434.4);
 		return ss;
 	}
 
@@ -137,7 +137,7 @@ public class ModelFactory {
 
 	public static SolutionSet emptySolutionSet() {
 		// rem values for config make no sense
-		final SolutionSet ss = new SolutionSet("noname", "", "", "", null, 1.0);
+		final SolutionSet ss = new SolutionSet("noname", "", "", "", null, -1.0,-1.0);
 		return ss;
 	}
 }
