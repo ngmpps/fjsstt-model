@@ -1,6 +1,8 @@
 package at.ngmpps.fjsstt.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import at.ngmpps.fjsstt.model.problem.FJSSTTproblem;
@@ -41,7 +43,7 @@ public class SolutionSet {
      *   (TODO: We can structure it even more as "Map<String, Solution>",
      *   where the type Solution would be a List<String> representing the steps of the solution.)
      */
-    private Map<String, String> solution;
+    private Map<String, List<ScheduledOperation>> solution;
 
     /**
      * The known best feasible Solution
@@ -55,7 +57,6 @@ public class SolutionSet {
 
 
     public SolutionSet(){
-   	 
     }
     
     public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution minUpperBound, Solution maxLowerBound) {
@@ -63,22 +64,21 @@ public class SolutionSet {
    			 p.getFjs(),
    			 p.getTransport(),
    			 p.getProperties(),
-   			 new HashMap<String,String>(), // do solution object below
+   			 new HashMap<String,List<ScheduledOperation>>(), // do solution object below
    			 minUpperBound!=null?minUpperBound.getObjectiveValue():Double.NEGATIVE_INFINITY,
 				 maxLowerBound!=null?maxLowerBound.getObjectiveValue():Double.NEGATIVE_INFINITY);
    	 Solution s = minUpperBound;
    	 if(s==null)
    		 s=maxLowerBound;
-   	 for(int i=0;i<s.getOperationsBeginTimes().length;++i) {
-   		 StringBuilder sb = new StringBuilder();
-   		 for(int j=0;j < s.getOperationsBeginTimes()[i].length && j < fjp.getProcessTimes()[i].length;++j) {
-   			 int maschine = s.getOperationsMachineAssignments()[i][j];
-   			 //.append(j) do not need the operation just its begin tim
-      		 sb.append("(").append(s.getOperationsBeginTimes()[i][j]).append(",")
-      		 .append(maschine).append(",")
-      		 .append(fjp.getProcessTimes()[i][j].length>maschine?fjp.getProcessTimes()[i][j][maschine]:"??").append(")");
+   	 for(int j=0;j<s.getOperationsBeginTimes().length;++j) {
+   		 List<ScheduledOperation> jobschedule = new ArrayList<>();
+   		 for(int o=0;o < s.getOperationsBeginTimes()[j].length && o < fjp.getProcessTimes()[j].length;++o) {
+   			 int machine = s.getOperationsMachineAssignments()[j][o];
+      		 int start = s.getOperationsBeginTimes()[j][o];
+      		 int end = start + fjp.getProcessTimes()[j][o][machine];
+      		 jobschedule.add(new ScheduledOperation(machine,j,o,start,end));
    		 }
-   		 solution.put("Job"+i, sb.toString());
+   		 solution.put("Job"+j, jobschedule);
    	 }
     }
 
@@ -86,7 +86,7 @@ public class SolutionSet {
    		 				  String problemFJS, 
    		 				  String problemTransport,
    		 				  String problemConfig, 
-                       Map<String, String> solution,
+                       Map<String, List<ScheduledOperation>> solution,
                        Double minUpperBound,
                        Double maxLowerBound) {
 
@@ -115,7 +115,7 @@ public class SolutionSet {
        return problemConfig;
     }
 
-    public Map<String, String> getSolution() {
+    public Map<String, List<ScheduledOperation>> getSolution() {
         return solution;
     }
 
@@ -143,7 +143,7 @@ public class SolutionSet {
        this.problemConfig=problemConfig;
     }
 
-    public void setSolution(Map<String, String> solution) {
+    public void setSolution(Map<String, List<ScheduledOperation>> solution) {
         this.solution = solution;
     }
 

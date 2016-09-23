@@ -25,7 +25,7 @@ public class Solution implements Serializable {
 	final Bid[] bids;
 
 	/**
-	 * The completion times of job operations.
+	 * The begin times of job operations.
 	 */
 	final int[][] operationsBeginTimes;
 
@@ -215,14 +215,14 @@ public class Solution implements Serializable {
 	}
 
 	/**
-	 * @return the mOperationsCompTimes
+	 * @return the start time per Job per Operation
 	 */
 	public int[][] getOperationsBeginTimes() {
 		return operationsBeginTimes;
 	}
 
 	/**
-	 * @return the mOperationsMachineAssignments
+	 * @return the assigned Machine per Job per Operation
 	 */
 	public int[][] getOperationsMachineAssignments() {
 		return operationsMachineAssignments;
