@@ -229,22 +229,47 @@ public class ModelFactory {
 		job10.add(new ScheduledOperation(7,10,3,79,83));
 		job10.add(new ScheduledOperation(20,10,4,90,98));
 		aSolution.put("Job 10", job10);
-
 		
 		
 		//"Job 11", "(18,14,5) (10,36,9) (9,45,8) (10,53,8) (7,69,4)"
-		
+		List<ScheduledOperation> job11 = new ArrayList<ScheduledOperation>();
+		job11.add(new ScheduledOperation(18,11,0,14,19));
+		job11.add(new ScheduledOperation(10,11,1,36,45));
+		job11.add(new ScheduledOperation(9,11,2,45,53));
+		job11.add(new ScheduledOperation(10,11,3,53,61));
+		job11.add(new ScheduledOperation(7,11,4,69,73));
+		aSolution.put("Job 11", job11);
 		
 		
 		//"Job 12", "(20,0,8) (7,15,4) (9,27,10) (9,37,8) (10,45,8)"
+		List<ScheduledOperation> job12 = new ArrayList<ScheduledOperation>();
+		job12.add(new ScheduledOperation(20,12,0,0,8));
+		job12.add(new ScheduledOperation(7,12,1,15,19));
+		job12.add(new ScheduledOperation(9,12,2,27,37));
+		job12.add(new ScheduledOperation(9,12,3,37,45));
+		job12.add(new ScheduledOperation(10,12,4,45,53));
+		aSolution.put("Job 12", job12);
 		
 		
 		//"Job 13", "(10,0,9) (9,9,8) (9,17,9) (7,34,4) (20,45,8)"
-		
+		List<ScheduledOperation> job13 = new ArrayList<ScheduledOperation>();
+		job13.add(new ScheduledOperation(10,13,0,0,9));
+		job13.add(new ScheduledOperation(9,13,1,9,17));
+		job13.add(new ScheduledOperation(9,13,2,17,26));
+		job13.add(new ScheduledOperation(7,13,3,34,38));
+		job13.add(new ScheduledOperation(20,13,4,45,53));
+		aSolution.put("Job 13", job13);		
 		
 		
 		//"Job 14", "(7,0,4) (10,12,7) (10,19,8) (10,27,9) (18,48,5)"
-		
+		List<ScheduledOperation> job14 = new ArrayList<ScheduledOperation>();
+		job14.add(new ScheduledOperation(7,14,0,0,4));
+		job14.add(new ScheduledOperation(10,14,1,12,19));
+		job14.add(new ScheduledOperation(10,14,2,19,27));
+		job14.add(new ScheduledOperation(10,14,3,27,36));
+		job14.add(new ScheduledOperation(18,14,4,48,53));
+		aSolution.put("Job 14", job14);
+
 		
 		mySolution = Collections.unmodifiableMap(aSolution);
 	}
