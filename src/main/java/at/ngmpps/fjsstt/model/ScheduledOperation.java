@@ -59,4 +59,14 @@ public class ScheduledOperation {
 		EndTime = endTime;
 	}
 	
+	public String toString(){
+		return "ScheduledOperation {" +
+            "machine='" + MachineId + '\'' +
+            ", job='" + JobId + '\'' +
+            ", operation='" + OperationId + '\'' +
+            ", start='" + StartTime + '\'' +
+            ", end=\'" + EndTime + '\'' +
+            '}';
+	}
+	
 }
