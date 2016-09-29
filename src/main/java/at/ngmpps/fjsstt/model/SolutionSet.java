@@ -70,16 +70,18 @@ public class SolutionSet {
    	 Solution s = minUpperBound;
    	 if(s==null)
    		 s=maxLowerBound;
-   	 for(int j=0;j<s.getOperationsBeginTimes().length;++j) {
-   		 List<ScheduledOperation> jobschedule = new ArrayList<>();
-   		 for(int o=0;o < s.getOperationsBeginTimes()[j].length && o < fjp.getProcessTimes()[j].length;++o) {
-   			 int machine = s.getOperationsMachineAssignments()[j][o];
-      		 int start = s.getOperationsBeginTimes()[j][o];
-      		 int end = start + fjp.getProcessTimes()[j][o][machine];
-      		 jobschedule.add(new ScheduledOperation(machine,j,o,start,end));
-   		 }
-   		 solution.put("Job"+j, jobschedule);
-   	 }
+        if (s != null) {
+            for(int j=0;j<s.getOperationsBeginTimes().length;++j) {
+                List<ScheduledOperation> jobschedule = new ArrayList<>();
+                for(int o=0;o < s.getOperationsBeginTimes()[j].length && o < fjp.getProcessTimes()[j].length;++o) {
+                    int machine = s.getOperationsMachineAssignments()[j][o];
+                   int start = s.getOperationsBeginTimes()[j][o];
+                   int end = start + fjp.getProcessTimes()[j][o][machine];
+                   jobschedule.add(new ScheduledOperation(machine,j,o,start,end));
+                }
+                solution.put("Job"+j, jobschedule);
+            }
+        }
     }
 
     public SolutionSet(String name,
