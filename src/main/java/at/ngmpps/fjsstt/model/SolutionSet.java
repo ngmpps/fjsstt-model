@@ -60,7 +60,7 @@ public class SolutionSet {
     }
     
     public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution minUpperBound, Solution maxLowerBound) {
-   	 this("Soltion for Problem with id " + p.hashCode(),
+   	 this("Solution for Problem with id " + p.hashCode(),
    			 p.getFjs(),
    			 p.getTransport(),
    			 p.getProperties(),
