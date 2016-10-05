@@ -22,7 +22,7 @@ public class SolutionSet {
     private String name;
     
     /**
-     * Id of the Problem for later reference
+     * Id of the Problem for later reference; Its the hashCode of ProblemSet
      */
     private int problemId;
 
@@ -113,6 +113,10 @@ public class SolutionSet {
         return name;
     }
     
+    /**
+     * 
+     * @return hashCode of ProblemSet
+     */
     public int getProblemId() {
        return problemId;
    }
