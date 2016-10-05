@@ -20,6 +20,11 @@ public class SolutionSet {
      * Arbitrary name of the algorithm used (e.g. "Algorithm 1", "Algorithm 2")
      */
     private String name;
+    
+    /**
+     * Id of the Problem for later reference
+     */
+    private int problemId;
 
     /**
      * Problem configuration information, to understand what the solution is for 
@@ -61,6 +66,7 @@ public class SolutionSet {
     
     public SolutionSet(ProblemSet p, FJSSTTproblem fjp, Solution minUpperBound, Solution maxLowerBound) {
    	 this("Solution for Problem with id " + p.hashCode(),
+   			 p.hashCode(),
    			 p.getFjs(),
    			 p.getTransport(),
    			 p.getProperties(),
@@ -85,6 +91,7 @@ public class SolutionSet {
     }
 
     public SolutionSet(String name,
+   		 				  int problemId,
    		 				  String problemFJS, 
    		 				  String problemTransport,
    		 				  String problemConfig, 
@@ -96,6 +103,7 @@ public class SolutionSet {
         this.problemFJS = problemFJS;
         this.problemTransport = problemTransport;
         this.problemConfig = problemConfig;
+        this.problemId = problemId;
         this.solution = solution;
         this.minUpperBoundSolution = minUpperBound;
         this.maxLowerBoundSolution = maxLowerBound;
@@ -104,6 +112,10 @@ public class SolutionSet {
     public String getName() {
         return name;
     }
+    
+    public int getProblemId() {
+       return problemId;
+   }
 
     public String getProblemFJS() {
         return problemFJS;
@@ -131,6 +143,10 @@ public class SolutionSet {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public void setProblemId(int id){
+   	 problemId = id;
     }
 
     public void setProblemFJS(String problemFJS) {
@@ -160,6 +176,7 @@ public class SolutionSet {
     public String toString() {
         return "SolutionSet{" +
                 "name='" + name + '\'' +
+                ", problemId='" + problemId + '\'' +
                 ", problemFJS='" + problemFJS + '\'' +
                 ", problemTransport='" + problemTransport + '\'' +
                 ", problemConfig='" + problemConfig + '\'' +
