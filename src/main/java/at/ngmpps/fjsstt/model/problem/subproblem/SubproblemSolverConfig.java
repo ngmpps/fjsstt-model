@@ -80,9 +80,24 @@ public class SubproblemSolverConfig implements Serializable {
 				ProblemParser.getPropertyInt(config, MAX_SHAKING_DISTANCE_KEY), ProblemParser.getPropertyInt(config, LS_ITERATIONS_KEY),
 				ProblemParser.getPropertyInt(config, MIN_MAX_SHIFT_DISTANCE), ProblemParser.getPropertyInt(config, LS_ALT_MACHINE_TRIES_KEY));
 	}
+	
+	/**
+	 * in certain experiments we need one configuration file but both types of Subproblem Solvers.
+	 * 
+	 * @param type
+	 * 	overrides the value given in the properties.
+	 * @param config
+	 * 
+	 */
+	public SubproblemSolverConfig(SubproblemSolverType type, Properties config) {
+		this(type,
+				ProblemParser.getPropertyInt(config, VNS_ITERATIONS_KEY), ProblemParser.getPropertyInt(config, MIN_MAX_SLACK_KEY),
+				ProblemParser.getPropertyInt(config, MAX_SHAKING_DISTANCE_KEY), ProblemParser.getPropertyInt(config, LS_ITERATIONS_KEY),
+				ProblemParser.getPropertyInt(config, MIN_MAX_SHIFT_DISTANCE), ProblemParser.getPropertyInt(config, LS_ALT_MACHINE_TRIES_KEY));
+	}
 
 	/**
-	 * Use this constructor for DP (needs not to be configured), or for VNS with
+	 * Use this constructor for DP (no config params needed), or for VNS with
 	 * default configuration.
 	 * 
 	 * @param type
