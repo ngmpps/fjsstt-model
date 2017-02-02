@@ -19,7 +19,10 @@ public class SubproblemSolverConfig implements Serializable {
 	public static final String TYPE_KEY = "SubproblemSolver.type";
 	public static final String TYPE_VNS = SubproblemSolverType.VariableNeighbourhoodSearch.name();//"VariableNeighbourhoodSearch";
 	public static final String TYPE_DP = SubproblemSolverType.DynamicProgramming.name();//"DynamicProgramming";
-	public static final String VNS_ITERATIONS_KEY = "SubproblemSolver.VNSiterations";
+	/**"EXECUTION_ITERATIONS_KEY replaces VNS_ITERATIONS_KEY"*/
+	public static final String EXECUTION_ITERATIONS_KEY = "SubproblemSolver.Execution.Iterations";
+	//public static final String VNS_ITERATIONS_KEY = "SubproblemSolver.VNSiterations";
+	public static final String EXECUTION_TIME_KEY = "SubproblemSolver.Execution.Time";
 	public static final String MAX_SHAKING_DISTANCE_KEY = "SubproblemSolver.MaxShakingDistance";
 	public static final String LS_ITERATIONS_KEY = "SubproblemSolver.LS_iterations";
 	public static final String LS_ALT_MACHINE_TRIES_KEY = "SubproblemSolver.LS_altMachine_tries";
@@ -34,9 +37,14 @@ public class SubproblemSolverConfig implements Serializable {
  
 	String confString;
 	/**
-	 * VNS config parameter, see {@link VNS_subproblem#iterations}
+	 * VNS config parameter, only used if executiontime==-1 see {@link VNS_subproblem#executionIterations}
 	 */
-	private int iterations;
+	private int executionIterations = -1;
+	
+	/**
+	 * VNS config parameter; override iterations
+	 */
+	private int executionTime = -1;
 
 	/**
 	 * An array of job specific max slack values, indices are jobs. For further
@@ -76,7 +84,7 @@ public class SubproblemSolverConfig implements Serializable {
 	public SubproblemSolverConfig(Properties config) {
 		this(ProblemParser.getPropertyString(config, TYPE_KEY).toLowerCase().contains("dynamicprogramming")
 				? SubproblemSolverType.DynamicProgramming : SubproblemSolverType.VariableNeighbourhoodSearch,
-				ProblemParser.getPropertyInt(config, VNS_ITERATIONS_KEY), ProblemParser.getPropertyInt(config, MIN_MAX_SLACK_KEY),
+				ProblemParser.getPropertyInt(config, EXECUTION_ITERATIONS_KEY, -1), ProblemParser.getPropertyInt(config, EXECUTION_TIME_KEY, -1), ProblemParser.getPropertyInt(config, MIN_MAX_SLACK_KEY),
 				ProblemParser.getPropertyInt(config, MAX_SHAKING_DISTANCE_KEY), ProblemParser.getPropertyInt(config, LS_ITERATIONS_KEY),
 				ProblemParser.getPropertyInt(config, MIN_MAX_SHIFT_DISTANCE), ProblemParser.getPropertyInt(config, LS_ALT_MACHINE_TRIES_KEY));
 	}
@@ -91,7 +99,7 @@ public class SubproblemSolverConfig implements Serializable {
 	 */
 	public SubproblemSolverConfig(SubproblemSolverType type, Properties config) {
 		this(type,
-				ProblemParser.getPropertyInt(config, VNS_ITERATIONS_KEY), ProblemParser.getPropertyInt(config, MIN_MAX_SLACK_KEY),
+				ProblemParser.getPropertyInt(config, EXECUTION_ITERATIONS_KEY, -1), ProblemParser.getPropertyInt(config, EXECUTION_TIME_KEY, -1), ProblemParser.getPropertyInt(config, MIN_MAX_SLACK_KEY),
 				ProblemParser.getPropertyInt(config, MAX_SHAKING_DISTANCE_KEY), ProblemParser.getPropertyInt(config, LS_ITERATIONS_KEY),
 				ProblemParser.getPropertyInt(config, MIN_MAX_SHIFT_DISTANCE), ProblemParser.getPropertyInt(config, LS_ALT_MACHINE_TRIES_KEY));
 	}
@@ -104,7 +112,8 @@ public class SubproblemSolverConfig implements Serializable {
 	 */
 	public SubproblemSolverConfig(SubproblemSolverType type) {
 		this.type = type;
-		this.iterations = 30;
+		this.executionIterations = 50; 
+		this.executionTime = 11;
 		this.maxSlacks = new int[100]; // create default maxSlack values (10) for
 													// 100 jobs
 		for (int i = 0; i < this.maxSlacks.length; i++) {
@@ -120,15 +129,15 @@ public class SubproblemSolverConfig implements Serializable {
 		}
 		this.ls_altMachine_tries = 1;
 		
-		confString = "" + iterations + ", " + maxSlacks + ", " + maxShakingDistance + ", " + ls_iterations
+		confString = "" + executionIterations + ", " + maxSlacks + ", " + maxShakingDistance + ", " + ls_iterations
 				+ ", " + maxShiftDistances + ", " + ls_altMachine_tries;
 	}
 
-	public SubproblemSolverConfig(SubproblemSolverType type, int VNSiterations, int maxSlack, int mMaxShakingDistance, int mLS_iterations,
+	public SubproblemSolverConfig(SubproblemSolverType type, int ExecutionIterations, int ExecutionTime, int maxSlack, int mMaxShakingDistance, int mLS_iterations,
 			int maxShiftDistance, int mLS_altMachine_tries) {
-		this(type, VNSiterations, new int[100], mMaxShakingDistance, mLS_iterations, new int[100], mLS_altMachine_tries, maxSlack,
+		this(type, ExecutionIterations, ExecutionTime, new int[100], mMaxShakingDistance, mLS_iterations, new int[100], mLS_altMachine_tries, maxSlack,
 				maxShiftDistance);
-		confString = "" + VNSiterations + ", " + maxSlack + ", " + mMaxShakingDistance + ", " + mLS_iterations
+		confString = "" + ExecutionIterations + ", " + ExecutionTime + ", " + maxSlack + ", " + mMaxShakingDistance + ", " + mLS_iterations
 				+ ", " + maxShiftDistance + ", " + mLS_altMachine_tries;
 	}
 
@@ -149,11 +158,12 @@ public class SubproblemSolverConfig implements Serializable {
 	 *           The minimum value for max shift distance.
 	 * 
 	 */
-	public SubproblemSolverConfig(SubproblemSolverType type, int VNSiterations, int[] maxSlacks, int mMaxShakingDistance, int mLS_iterations,
+	public SubproblemSolverConfig(SubproblemSolverType type, int ExecutionIterations, int ExecutionTime, int[] maxSlacks, int mMaxShakingDistance, int mLS_iterations,
 			int[] maxShiftDistances, int mLS_altMachine_tries, int minMaxSlack, int minMaxShiftDistance) {
 		super();
 		this.type = type;
-		this.iterations = VNSiterations;
+		this.executionIterations = ExecutionIterations;
+		this.executionTime = ExecutionTime;
 		this.maxSlacks = maxSlacks;
 		for (int i = 0; i < this.maxSlacks.length; i++) {
 			if (this.maxSlacks[i] < minMaxSlack) {
@@ -171,8 +181,12 @@ public class SubproblemSolverConfig implements Serializable {
 		this.ls_altMachine_tries = mLS_altMachine_tries;
 	}
 
-	public int getIterations() {
-		return iterations;
+	public int getExecutionIterations() {
+		return executionIterations;
+	}
+
+	public int getExecutionTime() {
+		return executionTime;
 	}
 
 	public int getLS_altMachine_tries() {
