@@ -56,7 +56,7 @@ public class FJSSTTproblem implements Serializable {
 	/**
 	 * The maximum number of operations of a job.
 	 */
-	final int maxOperations;
+	int maxOperations;
 
 	/**
 	 * The number of machines. The set of machines is {0,...,mMachines-1};
@@ -165,6 +165,33 @@ public class FJSSTTproblem implements Serializable {
 		return averageMaxSlacks;
 	}
 
+	/**
+	 * returns a new ID of a Job; need to add Operations, processTimes, dueDate and jobWeight for this individually
+	 * @return
+	 */
+	public Integer addJob() {
+		Integer newID = 0;
+		for(Integer key :operations.keySet())
+			newID = key>=newID?key+1:newID;
+		return newID;
+	}
+	public Integer addJob(Integer operations, int[][] processTimes, Integer dueDate, Integer jobWeight) {
+		Integer newID = addJob();
+		this.operations.put(newID, operations);
+		this.dueDates.put(newID, dueDate);
+		this.jobWeights.put(newID, jobWeight);
+		this.processTimes.put(newID,  processTimes);
+		if(operations>maxOperations)
+			maxOperations=operations;
+		return newID;
+	}
+	public void removeJob(Integer jobID)  {
+		this.operations.remove(jobID);
+		this.dueDates.remove(jobID);
+		this.jobWeights.remove(jobID);
+		this.processTimes.remove(jobID);
+	}
+	
 	/**
 	 * Calculates a lower bound on makespan for a FJSS problem (no travel times
 	 * are considered, machine capacity constraints are neglected). This means

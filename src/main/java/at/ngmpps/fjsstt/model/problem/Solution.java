@@ -149,17 +149,51 @@ public class Solution implements Serializable {
 		this.multipliers = null;
 	}
 
+	/**
+	 * returns a new ID of a Job; need to add Operations, processTimes, dueDate and jobWeight for this individually
+	 * @return
+	 */
+	public Integer addJob() {
+		Integer newID = 0;
+		for(Integer key :operationsBeginTimes.keySet())
+			newID = key>=newID?key+1:newID;
+		return newID;
+	}
+	public Integer addJob(int[] operationsBeginTimes, int[] operationsMachineAssignments) {
+		Integer newID = addJob();
+		this.operationsBeginTimes.put(newID, operationsBeginTimes);
+		if(operationsBeginTimes.length>this.maxOperationsPerJob)
+			maxOperationsPerJob=operationsBeginTimes.length;
+		this.operationsMachineAssignments.put(newID, operationsMachineAssignments);
+		return newID;
+	}
+	public void removeJob(Integer jobID)  {
+		this.operationsBeginTimes.remove(jobID);
+		this.operationsMachineAssignments.remove(jobID);
+		// todo recalculate maxOperationsPerJob as the removed Job could have been the longest one.
+	}
+	
 	public Solution clone() {
 		Solution result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients);
-		if (operationsBeginTimes != null)
-			for (int i : operationsBeginTimes.keySet())
-				for (int ii = 0; ii < operationsBeginTimes.get(i).length; ++ii)
-					result.setOperationsBeginTimes(i, ii, operationsBeginTimes.get(i)[ii]);
-
-		if (operationsMachineAssignments != null)
-			for (int i : operationsMachineAssignments.keySet())
-				for (int ii = 0; ii < operationsMachineAssignments.get(i).length; ++ii)
-					result.setOperationsMachineAssignments(i, ii, operationsMachineAssignments.get(i)[ii]);
+//		if (operationsBeginTimes != null)
+//			for (int i : operationsBeginTimes.keySet())
+//				for (int ii = 0; ii < operationsBeginTimes.get(i).length; ++ii)
+//					result.setOperationsBeginTimes(i, ii, operationsBeginTimes.get(i)[ii]);
+//
+//		if (operationsMachineAssignments != null)
+//			for (int i : operationsMachineAssignments.keySet())
+//				for (int ii = 0; ii < operationsMachineAssignments.get(i).length; ++ii)
+//					result.setOperationsMachineAssignments(i, ii, operationsMachineAssignments.get(i)[ii]);
+		if (operationsBeginTimes != null) {
+			for (int i : operationsBeginTimes.keySet()) {
+				result.getOperationsBeginTimes().put(i, Arrays.copyOf(operationsBeginTimes.get(i), operationsBeginTimes.get(i).length));
+			}
+		}
+		if (operationsMachineAssignments != null) {
+			for (int i : operationsMachineAssignments.keySet()) {
+				result.getOperationsMachineAssignments().put(i, Arrays.copyOf(operationsMachineAssignments.get(i), operationsMachineAssignments.get(i).length));
+			}
+		}
 		return result;
 	}
 
@@ -240,6 +274,7 @@ public class Solution implements Serializable {
 	public void setObjectiveValue(double newvalue) {
 		objectiveValue = newvalue;
 	}
+	
 
 	public void setOperationsBeginTimes(final Integer job, final int op, final int time) {
 		setArrayValueInMap(operationsBeginTimes, job, op, time);
@@ -249,7 +284,8 @@ public class Solution implements Serializable {
 		setArrayValueInMap(operationsMachineAssignments, job, op, time);
 	}
 
-	protected void setArrayValueInMap(Map<Integer, int[]> myMap, final Integer mapKey, final int arrayIdx, final int value) {
+
+	protected void setArrayValueInMap(final Map<Integer, int[]> myMap, final Integer mapKey, final int arrayIdx, final int value) {
 		if (!myMap.containsKey(mapKey)) {
 			int[] x = new int[arrayIdx + 1];
 			x[arrayIdx] = value;
