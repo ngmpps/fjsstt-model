@@ -2,6 +2,8 @@ package at.ngmpps.fjsstt.model.problem;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
 import at.ngmpps.fjsstt.model.problem.subproblem.Bid;
 
@@ -15,7 +17,6 @@ public class Solution implements Serializable {
 
 	private static final long serialVersionUID = -409137575428427517L;
 
-
 	double objectiveValue;
 
 	/**
@@ -27,12 +28,12 @@ public class Solution implements Serializable {
 	/**
 	 * The begin times of job operations.
 	 */
-	final int[][] operationsBeginTimes;
+	final Map<Integer, int[]> operationsBeginTimes;
 
 	/**
 	 * The machine assignments of job operations.
 	 */
-	final int[][] operationsMachineAssignments;
+	final Map<Integer, int[]> operationsMachineAssignments;
 
 	/**
 	 * The iteration in which the solution was found.
@@ -50,64 +51,56 @@ public class Solution implements Serializable {
 	 * solution.
 	 */
 	final double[][] multipliers;
-	
-	/**
-	 * Nr of Jobs
-	 */
-	int jobs;
-	
+
 	/**
 	 * Nr of Machines
 	 */
 	int machines;
-	
+
 	/**
 	 * Nr of timeslots
 	 */
 	int timeslots;
-	
+
 	/**
 	 * Max Nr of Operations per Job
 	 */
 	int maxOperationsPerJob;
-	
 
-	public Solution(final int machines, final int timeslots, final int jobs, final int maxOperationsPerJob) {
-		this.jobs = jobs;
+	public Solution(final int machines, final int timeslots, final int maxOperationsPerJob) {
 		this.machines = machines;
 		this.timeslots = timeslots;
 		this.maxOperationsPerJob = maxOperationsPerJob;
 
-		operationsBeginTimes = new int[jobs][maxOperationsPerJob];
-		operationsMachineAssignments = new int[jobs][maxOperationsPerJob];
+		operationsBeginTimes = new TreeMap<Integer, int[]>();
+		operationsMachineAssignments = new TreeMap<Integer, int[]>();
 		multipliers = new double[machines][timeslots];
 		subgradients = new int[0][];
 		bids = new Bid[0];
 		objectiveValue = Double.NEGATIVE_INFINITY;
 	}
 
-	public Solution(final double objectiveValue, final int machines, final int timeslots, final int jobs, final int maxOperationsPerJob) {
-		this(objectiveValue, machines, timeslots, jobs, maxOperationsPerJob, null, 0, new int[machines][timeslots]);
+	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob) {
+		this(objectiveValue, machines, timeslots, maxOperationsPerJob, null, 0, new int[machines][timeslots]);
 	}
 
-	public Solution(final double objectiveValue, final int machines, final int timeslots, final int jobs, final int maxOperationsPerJob, final Bid[] bids, final int iteration,
-			final int[][] subgradients) {
-		this(objectiveValue, machines, timeslots, jobs, maxOperationsPerJob, bids, iteration, subgradients, null);
+	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Bid[] bids,
+			final int iteration, final int[][] subgradients) {
+		this(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients, null);
 	}
 
-	public Solution(final double objectiveValue, final int machines, final int timeslots, final int jobs, final int maxOperationsPerJob, final Bid[] bids, final int iteration,
-			final int[][] subgradients, final double[][] multipliers) {
+	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Bid[] bids,
+			final int iteration, final int[][] subgradients, final double[][] multipliers) {
 		this.objectiveValue = objectiveValue;
 		this.bids = bids;
 		this.iteration = iteration;
 		this.subgradients = subgradients;
-		this.jobs = jobs;
 		this.machines = machines;
 		this.timeslots = timeslots;
 		this.maxOperationsPerJob = maxOperationsPerJob;
 
-		this.operationsBeginTimes = new int[jobs][maxOperationsPerJob];
-		this.operationsMachineAssignments = new int[jobs][maxOperationsPerJob];
+		operationsBeginTimes = new TreeMap<Integer, int[]>();
+		operationsMachineAssignments = new TreeMap<Integer, int[]>();
 		this.multipliers = new double[machines][timeslots];
 
 		// for all jobs and operations: compile the arrays for optimal machine
@@ -118,14 +111,17 @@ public class Solution implements Serializable {
 				final int[] machineAssignments = bid.getOptimumMachines();
 				final int[] beginTimes = bid.getOptimumBeginTimes();
 
-				System.arraycopy(machineAssignments, 0, this.operationsMachineAssignments[job], 0, machineAssignments.length);
-				System.arraycopy(beginTimes, 0, this.operationsBeginTimes[job], 0, beginTimes.length);
+				operationsMachineAssignments.put(job, new int[machineAssignments.length]);
+				operationsBeginTimes.put(job, new int[beginTimes.length]);
+
+				System.arraycopy(machineAssignments, 0, operationsMachineAssignments.get(job), 0, machineAssignments.length);
+				System.arraycopy(beginTimes, 0, operationsBeginTimes.get(job), 0, beginTimes.length);
 			}
-		} 
+		}
 
 		if (multipliers != null) {
 			for (int m = 0; m < machines; m++) {
-				System.arraycopy(multipliers[m], 0, multipliers[m], 0, multipliers[m].length);
+				System.arraycopy(multipliers[m], 0, this.multipliers[m], 0, multipliers[m].length);
 			}
 		}
 	}
@@ -137,11 +133,11 @@ public class Solution implements Serializable {
 	 * subgradients are not important for ListScheduling and - to my knowledge-
 	 * need not be set.
 	 */
-	public Solution(final double objectiveValue, final int[][] begTimes, final int[][] machAss) {
+	public Solution(final double objectiveValue, final Map<Integer, int[]> begTimes, final Map<Integer, int[]> machAss) {
 		this(objectiveValue, begTimes, machAss, 0);
 	}
 
-	public Solution(final double objectiveValue, final int[][] begTimes, final int[][] machAss,
+	public Solution(final double objectiveValue, final Map<Integer, int[]> begTimes, final Map<Integer, int[]> machAss,
 			final int iteration) {
 		this.objectiveValue = objectiveValue;
 		this.bids = null;
@@ -154,20 +150,18 @@ public class Solution implements Serializable {
 	}
 
 	public Solution clone() {
-		Solution result = new Solution(objectiveValue, machines, timeslots, jobs, maxOperationsPerJob, bids, iteration, subgradients);
+		Solution result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients);
 		if (operationsBeginTimes != null)
-			for (int i = 0; i < operationsBeginTimes.length; ++i)
-				for (int ii = 0; ii < operationsBeginTimes[i].length; ++ii)
-					result.setOperationsBeginTimes(i, ii, operationsBeginTimes[i][ii]);
+			for (int i : operationsBeginTimes.keySet())
+				for (int ii = 0; ii < operationsBeginTimes.get(i).length; ++ii)
+					result.setOperationsBeginTimes(i, ii, operationsBeginTimes.get(i)[ii]);
 
 		if (operationsMachineAssignments != null)
-			for (int i = 0; i < operationsMachineAssignments.length; ++i)
-				for (int ii = 0; ii < operationsMachineAssignments[i].length; ++ii)
-					result.setOperationsMachineAssignments(i, ii, operationsMachineAssignments[i][ii]);
+			for (int i : operationsMachineAssignments.keySet())
+				for (int ii = 0; ii < operationsMachineAssignments.get(i).length; ++ii)
+					result.setOperationsMachineAssignments(i, ii, operationsMachineAssignments.get(i)[ii]);
 		return result;
 	}
-
-
 
 	/**
 	 * Checks if two solutions are equal. The check only considers machine
@@ -178,11 +172,15 @@ public class Solution implements Serializable {
 	 * @return True if the solutions are equal.
 	 */
 	public boolean equals(Solution sol) {
-		for (int i = 0; i < jobs; i++) {
-			for (int j = 0; j < operationsMachineAssignments[i].length; j++) {
-				if (this.operationsMachineAssignments[i][j] != sol.getOperationsMachineAssignments()[i][j])
+		for (int i : operationsMachineAssignments.keySet()) {
+			if (!sol.getOperationsMachineAssignments().containsKey(i))
+				return false;
+			if (operationsMachineAssignments.get(i).length != sol.getOperationsBeginTimes().get(i).length)
+				return false;
+			for (int j = 0; j < operationsMachineAssignments.get(i).length; j++) {
+				if (this.operationsMachineAssignments.get(i)[j] != sol.getOperationsMachineAssignments().get(i)[j])
 					return false;
-				if (this.operationsBeginTimes[i][j] != sol.getOperationsBeginTimes()[i][j])
+				if (this.operationsBeginTimes.get(i)[j] != sol.getOperationsBeginTimes().get(i)[j])
 					return false;
 			}
 		}
@@ -217,14 +215,14 @@ public class Solution implements Serializable {
 	/**
 	 * @return the start time per Job per Operation
 	 */
-	public int[][] getOperationsBeginTimes() {
+	public Map<Integer, int[]> getOperationsBeginTimes() {
 		return operationsBeginTimes;
 	}
 
 	/**
 	 * @return the assigned Machine per Job per Operation
 	 */
-	public int[][] getOperationsMachineAssignments() {
+	public Map<Integer, int[]> getOperationsMachineAssignments() {
 		return operationsMachineAssignments;
 	}
 
@@ -243,24 +241,31 @@ public class Solution implements Serializable {
 		objectiveValue = newvalue;
 	}
 
-	public void setOperationsBeginTimes(final int job, final int op, final int time) {
-		operationsBeginTimes[job][op] = time;
+	public void setOperationsBeginTimes(final Integer job, final int op, final int time) {
+		setArrayValueInMap(operationsBeginTimes, job, op, time);
 	}
 
-	public void setOperationsMachineAssignments(final int job, final int op, final int time) {
-		operationsMachineAssignments[job][op] = time;
+	public void setOperationsMachineAssignments(final Integer job, final int op, final int time) {
+		setArrayValueInMap(operationsMachineAssignments, job, op, time);
+	}
+
+	protected void setArrayValueInMap(Map<Integer, int[]> myMap, final Integer mapKey, final int arrayIdx, final int value) {
+		if (!myMap.containsKey(mapKey)) {
+			int[] x = new int[arrayIdx + 1];
+			x[arrayIdx] = value;
+			myMap.put(mapKey, x);
+		} else if (myMap.get(mapKey).length < (arrayIdx + 1)) {
+			int[] x = Arrays.copyOf(myMap.get(mapKey), arrayIdx + 1);
+			x[arrayIdx] = value;
+			myMap.put(mapKey, x);
+		} else
+			myMap.get(mapKey)[arrayIdx] = value;
 	}
 
 	@Override
 	public String toString() {
-		return "Solution{" +
-				", objectiveValue=" + objectiveValue +
-				", bids=" + Arrays.toString(bids) +
-				", operationsBeginTimes=" + Arrays.toString(operationsBeginTimes) +
-				", operationsMachineAssignments=" + Arrays.toString(operationsMachineAssignments) +
-				", iteration=" + iteration +
-				", subgradients=" + Arrays.toString(subgradients) +
-				", multipliers=" + Arrays.toString(multipliers) +
-				'}';
+		return "Solution{" + ", objectiveValue=" + objectiveValue + ", bids=" + Arrays.toString(bids) + ", operationsBeginTimes="
+				+ operationsBeginTimes.toString() + ", operationsMachineAssignments=" + operationsMachineAssignments.toString() + ", iteration="
+				+ iteration + ", subgradients=" + Arrays.toString(subgradients) + ", multipliers=" + Arrays.toString(multipliers) + '}';
 	}
 }

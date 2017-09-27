@@ -7,10 +7,10 @@ public class ScheduledOperation {
 	private int OperationId;
 	private int StartTime;
 	private int EndTime;
-	
-	public ScheduledOperation(){
+
+	public ScheduledOperation() {
 	}
-	
+
 	public ScheduledOperation(int MachineId, int JobId, int OperationId, int StartTime, int EndTime) {
 		this.MachineId = MachineId;
 		this.JobId = JobId;
@@ -58,15 +58,10 @@ public class ScheduledOperation {
 	public void setEndTime(int endTime) {
 		EndTime = endTime;
 	}
-	
-	public String toString(){
-		return "ScheduledOperation {" +
-            "machine='" + MachineId + '\'' +
-            ", job='" + JobId + '\'' +
-            ", operation='" + OperationId + '\'' +
-            ", start='" + StartTime + '\'' +
-            ", end=\'" + EndTime + '\'' +
-            '}';
+
+	public String toString() {
+		return "ScheduledOperation {" + "machine='" + MachineId + '\'' + ", job='" + JobId + '\'' + ", operation='" + OperationId + '\''
+				+ ", start='" + StartTime + '\'' + ", end=\'" + EndTime + '\'' + '}';
 	}
-	
+
 }

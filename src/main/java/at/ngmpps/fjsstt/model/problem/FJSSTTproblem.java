@@ -5,8 +5,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +39,19 @@ public class FJSSTTproblem implements Serializable {
 	public enum Objective {
 		COMPLETION_TIME, TARDINESS
 	}
-	
+
 	/**
 	 * The number of jobs. The set of jobs is {0,...,mJobs-1};
+	 *
+	 * final int jobs;
 	 */
-	final int jobs;
 
 	/**
 	 * The number of operations per job, array indices are jobs. The set of
 	 * operations for job i is {0,...,mOperations[i]-1}; It is assumed that the
 	 * operations are to be processed in the order 0,...,mOperations[i] - 1.
 	 */
-	final int operations[];
+	final Map<Integer, Integer> operations;
 
 	/**
 	 * The maximum number of operations of a job.
@@ -72,13 +75,13 @@ public class FJSSTTproblem implements Serializable {
 	 * (job,operation) in the form of "job-operation", the corresponding value is
 	 * the *set* (i.e. every value is in there once) of alternative machines.
 	 */
-	final HashMap<String, List<Integer>> altMachines;
+	final Map<String, List<Integer>> altMachines;
 
 	/**
 	 * The process times of operations on machines. The first index is the job,
 	 * the second index is the operation, and the third index is the machine.
 	 */
-	final int[][][] processTimes;
+	final Map<Integer, int[][]> processTimes;
 
 	/**
 	 * The travel times between machines. Both indices denote machines.
@@ -88,7 +91,7 @@ public class FJSSTTproblem implements Serializable {
 	/**
 	 * The job's due dates, indices are jobs.
 	 */
-	final int[] dueDates;
+	final Map<Integer, Integer> dueDates;
 
 	/**
 	 * The objective function to be minimised on job level.
@@ -98,14 +101,12 @@ public class FJSSTTproblem implements Serializable {
 	/**
 	 * The job weights (for weighted tardiness / completion time objectives).
 	 */
-	int[] jobWeights;
+	Map<Integer, Integer> jobWeights;
 
 	Properties configurations = null;
 
 	int problemId = -1;
 
-
-	
 	/**
 	 * Creates an instance of the FJSSTT problem.
 	 * 
@@ -121,11 +122,10 @@ public class FJSSTTproblem implements Serializable {
 	 * @param dueDates
 	 * @param objective
 	 */
-	public FJSSTTproblem(final int jobs, final int[] operations, final int maxOperations, final int machines, final int timeslots,
-			final HashMap<String, List<Integer>> altMachines, final int[][][] processTimes, final int[][] travelTimes, final int[] dueDates,
-			final Objective objective, final int[] weights) {
+	public FJSSTTproblem(final Map<Integer, Integer> operations, final int maxOperations, final int machines, final int timeslots,
+			final HashMap<String, List<Integer>> altMachines, final Map<Integer, int[][]> processTimes, final int[][] travelTimes,
+			final Map<Integer, Integer> dueDates, final Objective objective, final Map<Integer, Integer> weights) {
 
-		this.jobs = jobs;
 		this.operations = operations;
 		this.maxOperations = maxOperations;
 		this.machines = machines;
@@ -141,10 +141,11 @@ public class FJSSTTproblem implements Serializable {
 		this.jobWeights = weights;
 	}
 
-	public FJSSTTproblem(final int jobs, final int[] operations, final int maxOperations, final int machines, final int timeslots,
-			final HashMap<String, List<Integer>> altMachines, final int[][][] processTimes, final int[][] travelTimes, final int[] dueDates,
-			final Objective objective, final int[] weights, final Properties configurations) {
-		this(jobs, operations, maxOperations, machines, timeslots, altMachines, processTimes, travelTimes, dueDates, objective, weights);
+	public FJSSTTproblem(final Map<Integer, Integer> operations, final int maxOperations, final int machines, final int timeslots,
+			final HashMap<String, List<Integer>> altMachines, final Map<Integer, int[][]> processTimes, final int[][] travelTimes,
+			final Map<Integer, Integer> dueDates, final Objective objective, final Map<Integer, Integer> weights,
+			final Properties configurations) {
+		this(operations, maxOperations, machines, timeslots, altMachines, processTimes, travelTimes, dueDates, objective, weights);
 		this.configurations = configurations;
 	}
 
@@ -154,12 +155,12 @@ public class FJSSTTproblem implements Serializable {
 	 * 
 	 * @return An integer array of average maximum slacks. Indices are jobs.
 	 */
-	public int[] calcAverageMaxSlacks() {
-		int[] averageMaxSlacks = new int[jobs];
-		for (int job = 0; job < this.jobs; job++) {
-			int jobSlack = Math.max(0, dueDates[job] - this.calcMinJobCompletionTime(job));
-			Double averageMaxSlack = (double) jobSlack / (operations[job]);
-			averageMaxSlacks[job] = averageMaxSlack.intValue();
+	public Map<Integer, Integer> calcAverageMaxSlacks() {
+		Map<Integer, Integer> averageMaxSlacks = new TreeMap<Integer, Integer>();
+		for (Integer job : operations.keySet()) {
+			int jobSlack = Math.max(0, dueDates.get(job) - this.calcMinJobCompletionTime(job));
+			Double averageMaxSlack = (double) jobSlack / (operations.get(job));
+			averageMaxSlacks.put(job, averageMaxSlack.intValue());
 		}
 		return averageMaxSlacks;
 	}
@@ -173,16 +174,16 @@ public class FJSSTTproblem implements Serializable {
 	 */
 	public int calcLBmakespanFJSS() {
 		int minMakespan = -1;
-		int[] jobMinCompletionTimes = new int[this.getJobs()];
-		for (int job = 0; job < this.getJobs(); job++) {
+		int[] jobMinCompletionTimes = new int[operations.size()];
+		for (int job : operations.keySet()) {
 			int jobMinProcessTime = 0;
 
-			for (int op = 0; op < operations[job]; op++) {
+			for (int op = 0; op < operations.get(job); op++) {
 				List<Integer> opAltMachines = getAltMachines(job, op);
 				int opMinProcessTime = Integer.MAX_VALUE;
 				for (int machine : opAltMachines) {
-					if (processTimes[job][op][machine] < opMinProcessTime) {
-						opMinProcessTime = processTimes[job][op][machine];
+					if (processTimes.get(job)[op][machine] < opMinProcessTime) {
+						opMinProcessTime = processTimes.get(job)[op][machine];
 					}
 				}
 				jobMinProcessTime += opMinProcessTime;
@@ -216,16 +217,16 @@ public class FJSSTTproblem implements Serializable {
 		 * v[j][m] is the minimum completion time of operation j assigned to
 		 * machine m.
 		 */
-		int[][] v = new int[operations[job]][machines];
+		int[][] v = new int[operations.get(job)][machines];
 
 		// first stage: calculate v values for operation 0
 		List<Integer> opAltMachines = getAltMachines(job, 0);
 		for (int opMachine : opAltMachines) {
-			v[0][opMachine] = processTimes[job][0][opMachine] - 1;
+			v[0][opMachine] = processTimes.get(job)[0][opMachine] - 1;
 		}
 
 		// iterative stages
-		for (int op = 1; op < operations[job]; op++) {
+		for (int op = 1; op < operations.get(job); op++) {
 			int previousOp = op - 1;
 			opAltMachines = this.altMachines.get(job + "-" + op);
 			for (int opMachine : opAltMachines) {
@@ -235,7 +236,7 @@ public class FJSSTTproblem implements Serializable {
 				v[op][opMachine] = Integer.MAX_VALUE;
 				List<Integer> previousOpAltMachines = getAltMachines(job, previousOp);
 				for (int previousOpMachine : previousOpAltMachines) {
-					int new_v = v[op - 1][previousOpMachine] + travelTimes[previousOpMachine][opMachine] + processTimes[job][op][opMachine];
+					int new_v = v[op - 1][previousOpMachine] + travelTimes[previousOpMachine][opMachine] + processTimes.get(job)[op][opMachine];
 					if (new_v < v[op][opMachine]) {
 						v[op][opMachine] = new_v;
 					}
@@ -245,7 +246,7 @@ public class FJSSTTproblem implements Serializable {
 
 		// last stage, determine minimum v value for last operation, which is the
 		// minimum job completion time
-		int lastOp = this.operations[job] - 1;
+		int lastOp = this.operations.get(job) - 1;
 		opAltMachines = this.altMachines.get(job + "-" + lastOp);
 		for (int lastOpMachine : opAltMachines) {
 			if (v[lastOp][lastOpMachine] < jobCompTime) {
@@ -257,7 +258,7 @@ public class FJSSTTproblem implements Serializable {
 
 	public SubproblemInstance createSubproblem(int job) {
 
-		final int operations = getOperations()[job];
+		final int operations = getOperations().get(job);
 		final int machines = getMachines();
 		final int timeslots = getTimeSlots();
 
@@ -268,7 +269,7 @@ public class FJSSTTproblem implements Serializable {
 		final HashMap<Integer, List<Integer>> altMachinesMapping = new HashMap<Integer, List<Integer>>();
 
 		// loop over job operations
-		for (int j = 0; j < getOperations()[job]; j++) {
+		for (int j = 0; j < getOperations().get(job); j++) {
 			// the set of alternative machines for operation (i,j)
 			final List<Integer> altMachines = getAltMachines(job, j); // FIXME:
 																							// debug
@@ -277,15 +278,15 @@ public class FJSSTTproblem implements Serializable {
 
 		// set the operations' process times on machines
 
-		final int[][] processTimes_subproblem = new int[getOperations()[job]][getMachines()];
-		final int[][][] processTimes_problem = getProcessTimes();
-		for (int j = 0; j < getOperations()[job]; j++) {
-			System.arraycopy(processTimes_problem[job][j], 0, processTimes_subproblem[j], 0, getMachines());
+		final int[][] processTimes_subproblem = new int[getOperations().get(job)][getMachines()];
+		final Map<Integer, int[][]> processTimes_problem = getProcessTimes();
+		for (int j = 0; j < getOperations().get(job); j++) {
+			System.arraycopy(processTimes_problem.get(job)[j], 0, processTimes_subproblem[j], 0, getMachines());
 		}
 
 		final int[][] travelTimes = getTravelTimes();
-		final int dueDate = getDueDates()[job];
-		final int jobWeight = getJobWeights()[job];
+		final int dueDate = getDueDates().get(job);
+		final int jobWeight = getJobWeights().get(job);
 
 		return new SubproblemInstance(job, operations, machines, timeslots, altMachinesMapping, processTimes_subproblem, travelTimes, dueDate,
 				jobWeight, getObjective());
@@ -300,10 +301,10 @@ public class FJSSTTproblem implements Serializable {
 		// removed parameter final FJSSTT_problem problem
 		// -> now using mProblem
 
-		final SubproblemInstance[] subproblems = new SubproblemInstance[getJobs()];
+		final SubproblemInstance[] subproblems = new SubproblemInstance[operations.size()];
 
 		// loop over all jobs
-		for (int job = 0; job < getJobs(); job++) {
+		for (int job : operations.keySet()) {
 			subproblems[job] = createSubproblem(job);
 		}
 
@@ -407,18 +408,14 @@ public class FJSSTTproblem implements Serializable {
 		return configurations;
 	}
 
-	public int[] getDueDates() {
+	public Map<Integer, Integer> getDueDates() {
 		return dueDates;
-	}
-
-	public int getJobs() {
-		return jobs;
 	}
 
 	/**
 	 * @return the mJobWeights
 	 */
-	public int[] getJobWeights() {
+	public Map<Integer, Integer> getJobWeights() {
 		return jobWeights;
 	}
 
@@ -440,11 +437,11 @@ public class FJSSTTproblem implements Serializable {
 		return objective;
 	}
 
-	public int[] getOperations() {
+	public Map<Integer, Integer> getOperations() {
 		return operations;
 	}
 
-	public int[][][] getProcessTimes() {
+	public Map<Integer, int[][]> getProcessTimes() {
 		return processTimes;
 	}
 
@@ -455,17 +452,18 @@ public class FJSSTTproblem implements Serializable {
 	public int[][] getTravelTimes() {
 		return travelTimes;
 	}
-	
-	public void setProblemId(int id){
+
+	public void setProblemId(int id) {
 		problemId = id;
 	}
-	
+
 	/**
 	 * returns the prblem ID; if non is set, one is generated on the fly
+	 * 
 	 * @return
 	 */
-	public int getProblemId(){
-		if(problemId==-1)
+	public int getProblemId() {
+		if (problemId == -1)
 			problemId = super.hashCode();
 		return problemId;
 	}
@@ -502,7 +500,7 @@ public class FJSSTTproblem implements Serializable {
 	 * @param mJobWeights
 	 *           the mJobWeights to set
 	 */
-	public void setJobWeights(final int[] mJobWeights) {
+	public void setJobWeights(final Map<Integer, Integer> mJobWeights) {
 		this.jobWeights = mJobWeights;
 	}
 

@@ -10,7 +10,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,12 +44,12 @@ public class ProblemParser {
 	// File file;
 
 	// Objective is to fill to be able to create a FJSSTT_problem
-	int jobs;
+	// int jobs;
 
 	int machines;
 
 	// perJob
-	int[] operations;
+	Map<Integer, Integer> operations;
 
 	int maxOperations;
 
@@ -61,15 +63,15 @@ public class ProblemParser {
 
 	// The first index is the job, the second index is the operation,
 	// and the third index is the machine.
-	int[][][] processTimes;
+	Map<Integer, int[][]> processTimes;
 
 	int[][] travelTimes;
 
 	// per job
-	int[] dueDates;
+	Map<Integer, Integer> dueDates;
 
 	// job priorities
-	int[] jobWeights;
+	Map<Integer, Integer> jobWeights;
 
 	// default objective function for parsed files
 	Objective objective = Objective.TARDINESS;
@@ -109,7 +111,6 @@ public class ProblemParser {
 		return this;
 	}
 
-	
 	/**
 	 * Based on the fjs File find also a .properties file with the same name and
 	 * the transport file configured there.
@@ -136,20 +137,23 @@ public class ProblemParser {
 		final ProblemParser parse = new ProblemParser();
 		return parse.parseConfigProblem(new File(filename));
 	}
-	
-	
-	public static FJSSTTproblem parseFiles(String problemFile, String configFile, String transportFile) throws URISyntaxException, IOException {
+
+	public static FJSSTTproblem parseFiles(String problemFile, String configFile, String transportFile)
+			throws URISyntaxException, IOException {
 		final ProblemParser parse = new ProblemParser();
-			parse.parseProblemFileOnly(new File(problemFile));
-			if(configFile!=null && !configFile.isEmpty()) {
-				parse.parseConfigurationFile(new File(configFile));
-			}
-			if(transportFile!=null && !transportFile.isEmpty())
-				parse.parseTransportTimes(new File(transportFile));
+		parse.parseProblemFileOnly(new File(problemFile));
+		if (configFile != null && !configFile.isEmpty()) {
+			parse.parseConfigurationFile(new File(configFile));
+		}
+		if (transportFile != null && !transportFile.isEmpty())
+			parse.parseTransportTimes(new File(transportFile));
 		return parse.getProblem();
 	}
+
 	/**
-	 * use this method for generating a problem if you have the content of the required files (ie you don't need to load from disk)
+	 * use this method for generating a problem if you have the content of the
+	 * required files (ie you don't need to load from disk)
+	 * 
 	 * @param problemContent
 	 * @param configContent
 	 * @param transportContent
@@ -159,12 +163,12 @@ public class ProblemParser {
 		final ProblemParser parse = new ProblemParser();
 		try {
 			parse.parseProblem(problemContent);
-			if(configContent!=null && !configContent.isEmpty())
+			if (configContent != null && !configContent.isEmpty())
 				parse.parseConfiguration(configContent);
-			if(transportContent!=null && !transportContent.isEmpty() )
+			if (transportContent != null && !transportContent.isEmpty())
 				parse.parseTransportTimesString(transportContent);
-		} catch(Exception e) {
-			logger.error(e.getClass().getName()+": "+e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
 		}
 		return parse.getProblem();
 	}
@@ -292,25 +296,28 @@ public class ProblemParser {
 	public static List<File> findTransportFiles(File problemFilePath) throws IOException {
 		return findFiles(problemFilePath, TRANSPORT_FILE_EXTENSION);
 	}
-	public static boolean getPropertyBool(Properties config, String key){
+
+	public static boolean getPropertyBool(Properties config, String key) {
 		return getPropertyBool(config, key, null);
 	}
+
 	public static boolean getPropertyBool(Properties config, String key, Boolean defaultval) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
 			if (prop != null && !prop.isEmpty()) {
-					return Boolean.parseBoolean(trimm(config.getProperty(key)));
+				return Boolean.parseBoolean(trimm(config.getProperty(key)));
 			}
 		}
 		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
-		if(defaultval!=null)
+		if (defaultval != null)
 			return defaultval;
 		return false;
 	}
 
-	public static double getPropertyDouble(Properties config, String key){
-		return getPropertyDouble(config,key,null);
+	public static double getPropertyDouble(Properties config, String key) {
+		return getPropertyDouble(config, key, null);
 	}
+
 	public static double getPropertyDouble(Properties config, String key, Double defaultVal) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
@@ -319,14 +326,16 @@ public class ProblemParser {
 			}
 		}
 		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
-		if(defaultVal!=null)
+		if (defaultVal != null)
 			return defaultVal;
 		return 0.0;
 	}
+
 	public static int getPropertyInt(Properties config, String key) {
-		return getPropertyInt(config,key,null);
+		return getPropertyInt(config, key, null);
 	}
-	public static int getPropertyInt(Properties config, String key,Integer defaultVal) {
+
+	public static int getPropertyInt(Properties config, String key, Integer defaultVal) {
 		if (config.containsKey(key)) {
 
 			String prop = config.getProperty(key);
@@ -335,13 +344,15 @@ public class ProblemParser {
 			}
 		}
 		logger.error("Property Key {} not found or emtpy in Config {}.", key, config.toString());
-		if(defaultVal!=null)
+		if (defaultVal != null)
 			return defaultVal;
 		return 0;
 	}
+
 	public static String getPropertyString(Properties config, String key) {
-		return getPropertyString(config,key,null);
+		return getPropertyString(config, key, null);
 	}
+
 	public static String getPropertyString(Properties config, String key, String defaultVal) {
 		if (config.containsKey(key)) {
 			String prop = config.getProperty(key);
@@ -350,7 +361,7 @@ public class ProblemParser {
 			}
 		}
 		logger.error("Property Key {} not found or empty in Config {}.", key, config.toString());
-		if(defaultVal!=null)
+		if (defaultVal != null)
 			return defaultVal;
 		return "";
 	}
@@ -368,9 +379,9 @@ public class ProblemParser {
 	}
 
 	public FJSSTTproblem getProblem() {
-		FJSSTTproblem problem = new FJSSTTproblem(jobs, operations, maxOperations, machines, timeslotsMaxDueDate, altMachines, processTimes, travelTimes,
-				dueDates, objective, jobWeights, configuration);
-		if(configuration!=null && configuration.containsKey(ProblemParser.SEARCH_NR_TIME_SLOTS_KEY))
+		FJSSTTproblem problem = new FJSSTTproblem(operations, maxOperations, machines, timeslotsMaxDueDate, altMachines, processTimes,
+				travelTimes, dueDates, objective, jobWeights, configuration);
+		if (configuration != null && configuration.containsKey(ProblemParser.SEARCH_NR_TIME_SLOTS_KEY))
 			problem.setTimeSlots(Integer.parseInt(configuration.getProperty(ProblemParser.SEARCH_NR_TIME_SLOTS_KEY)));
 		return problem;
 	}
@@ -378,6 +389,7 @@ public class ProblemParser {
 	public boolean getPropertyBool(String key) {
 		return getPropertyBool(key, null);
 	}
+
 	public boolean getPropertyBool(String key, Boolean defaultVal) {
 		return getPropertyBool(configuration, key, defaultVal);
 	}
@@ -385,7 +397,7 @@ public class ProblemParser {
 	public double getPropertyDouble(String key) {
 		return getPropertyDouble(key, null);
 	}
-	
+
 	public double getPropertyDouble(String key, Double defaultVal) {
 		return getPropertyDouble(configuration, key, defaultVal);
 	}
@@ -431,7 +443,7 @@ public class ProblemParser {
 					parseTransportTimes(transportFiles.get(0));
 				}
 			}
-			return getProblem(); 
+			return getProblem();
 		} catch (Exception io) {
 			// its ok if something happens here. we still have the problem
 			io.printStackTrace();
@@ -479,100 +491,104 @@ public class ProblemParser {
 		}
 		return problemFile;
 	}
-	
+
 	public String parseProblem(String prob) throws IOException {
 		BufferedReader reader = new BufferedReader(new StringReader(prob));
 		parseProblem(reader);
 		reader.close();
 		return prob;
 	}
-	
+
 	public void parseProblem(BufferedReader reader) throws IOException {
-			// key == int[](job,operation)
-			altMachines = new HashMap<String, List<Integer>>();
+		// key == int[](job,operation)
+		altMachines = new HashMap<String, List<Integer>>();
 
-			// read files line per line
-			
+		// read files line per line
 
-			String currentLine = reader.readLine();
+		String currentLine = reader.readLine();
 
-			// first line has 2 numbers: mJobs mMachines
-			final Matcher firstline = ProblemParser.firstlinePattern.matcher(currentLine);
-			firstline.matches();
-			jobs = Integer.parseInt(firstline.group(1));
-			machines = Integer.parseInt(firstline.group(2));
+		// first line has 2 numbers: mJobs mMachines
+		final Matcher firstline = ProblemParser.firstlinePattern.matcher(currentLine);
+		firstline.matches();
+		// Maps not arrays anymore
+		// jobs = Integer.parseInt(firstline.group(1));
+		machines = Integer.parseInt(firstline.group(2));
 
-			dueDates = new int[jobs];
-			operations = new int[jobs];
-			jobWeights = new int[jobs];
+		dueDates = new TreeMap<Integer, Integer>();
+		operations = new TreeMap<Integer, Integer>();
+		jobWeights = new TreeMap<Integer, Integer>();
 
-			// to find max, we init this with 0
-			timeslotsMaxDueDate = 0;
-			maxOperations = 0;
+		// to find max, we init this with 0
+		timeslotsMaxDueDate = 0;
+		maxOperations = 0;
 
-			processTimes = new int[jobs][][];
+		processTimes = new TreeMap<Integer, int[][]>();
 
-			// one line per job
-			for (int j = 0; j < jobs; ++j) {
-				currentLine = reader.readLine();
-				final Matcher operationsLine = ProblemParser.operationsLinePattern.matcher(currentLine);
-				operationsLine.matches();
-				operations[j] = new Integer(operationsLine.group(1));
-				maxOperations = maxOperations > operations[j] ? maxOperations : operations[j];
+		int j = -1;
+		// one line per job && check for after last line (null) && check if there
+		// is no trailing line with a few chars or so...
+		for (currentLine = reader.readLine(); currentLine != null && currentLine.length() > 5; currentLine = reader.readLine()) {
+			j++;
+			final Matcher operationsLine = ProblemParser.operationsLinePattern.matcher(currentLine);
+			operationsLine.matches();
+			Integer ops = new Integer(operationsLine.group(1));
+			operations.put(j, ops);
+			maxOperations = maxOperations > ops ? maxOperations : ops;
 
-				// main stuff in the form of: #Machines/Op (machine,processtime)
-				// (machine,processtime)... #Machines/Op times
-				// e.g.: 3 1 2 2 3 4 2 : 3 machines for this operation: machine
-				// 1 needs 2, machine 2 needs 3, machine 4 needs 2
-				// !!! need to adjust machineID: id=1 here its 0
-				final String operationsForJob = operationsLine.group(2);
+			// main stuff in the form of: #Machines/Op (machine,processtime)
+			// (machine,processtime)... #Machines/Op times
+			// e.g.: 3 1 2 2 3 4 2 : 3 machines for this operation: machine
+			// 1 needs 2, machine 2 needs 3, machine 4 needs 2
+			// !!! need to adjust machineID: id=1 here its 0
+			final String operationsForJob = operationsLine.group(2);
 
-				// TODO releaseTime is not used; keep this line to keep the
-				// semantics of this value
-				final int releaseTime = new Integer(operationsLine.group(3));
+			// TODO releaseTime is not used; keep this line to keep the
+			// semantics of this value
+			final int releaseTime = new Integer(operationsLine.group(3));
 
-				// there is a semantic difference between L. Mönch's DueDate
-				// (time point)
-				// vs our time-slot based point of view. Addition our first
-				// time-slot == 0.
-				// hence we reduce the dueDates parsed by 1
-				dueDates[j] = new Integer(operationsLine.group(4)) - 1;
-				timeslotsMaxDueDate = timeslotsMaxDueDate > dueDates[j] ? timeslotsMaxDueDate : dueDates[j];
+			// there is a semantic difference between L. Mönch's DueDate
+			// (time point)
+			// vs our time-slot based point of view. Addition our first
+			// time-slot == 0.
+			// hence we reduce the dueDates parsed by 1
+			Integer dd = new Integer(operationsLine.group(4)) - 1;
+			dueDates.put(j, dd);
+			timeslotsMaxDueDate = timeslotsMaxDueDate > dd ? timeslotsMaxDueDate : dd;
 
-				// priorities
-				jobWeights[j] = new Integer(operationsLine.group(5));
+			// priorities
+			jobWeights.put(j, new Integer(operationsLine.group(5)));
 
-				// parse line
-				final Matcher operationsProcessTimes = ProblemParser.operationsProcessesPattern.matcher(operationsForJob);
+			// parse line
+			final Matcher operationsProcessTimes = ProblemParser.operationsProcessesPattern.matcher(operationsForJob);
 
-				// parse per job per operation
-				processTimes[j] = new int[operations[j]][];
-				for (int o = 0; o < operations[j]; ++o) {
-					// in last array we have all machines. but not all are
-					// possible (=0)
-					processTimes[j][o] = new int[machines];
+			// parse per job per operation
+			processTimes.put(j, new int[operations.get(j)][]);
+			for (int o = 0; o < operations.get(j); ++o) {
+				// in last array we have all machines. but not all are
+				// possible (=0)
+				processTimes.get(j)[o] = new int[machines];
 
-					// how many tuples (machine, processingtime) do we have for
-					// the
-					// operation o
+				// how many tuples (machine, processingtime) do we have for
+				// the
+				// operation o
+				operationsProcessTimes.find();
+				final int altMachinesForOpCount = new Integer(operationsProcessTimes.group());
+				final List<Integer> altMachinesForOp = new ArrayList<Integer>();
+				for (int machineIdx = 0; machineIdx < altMachinesForOpCount; machineIdx++) {
 					operationsProcessTimes.find();
-					final int altMachinesForOpCount = new Integer(operationsProcessTimes.group());
-					final List<Integer> altMachinesForOp = new ArrayList<Integer>();
-					for (int machineIdx = 0; machineIdx < altMachinesForOpCount; machineIdx++) {
-						operationsProcessTimes.find();
-						int machine = new Integer(operationsProcessTimes.group());
-						// machine 1 in file is machine 0 here!
-						machine--;
-						altMachinesForOp.add(machine);
-						operationsProcessTimes.find();
-						final int time = new Integer(operationsProcessTimes.group());
-						processTimes[j][o][machine] = time;
-					}
-					final String key = j + "-" + o;
-					altMachines.put(key, altMachinesForOp);
+					int machine = new Integer(operationsProcessTimes.group());
+					// machine 1 in file is machine 0 here!
+					machine--;
+					altMachinesForOp.add(machine);
+					operationsProcessTimes.find();
+					final int time = new Integer(operationsProcessTimes.group());
+					processTimes.get(j)[o][machine] = time;
 				}
+				final String key = j + "-" + o;
+				altMachines.put(key, altMachinesForOp);
 			}
-			
+		}
+
 	}
 
 	/**
@@ -597,7 +613,7 @@ public class ProblemParser {
 		}
 		return null;
 	}
-	
+
 	public Properties parseConfiguration(String properties) throws IOException {
 		configuration = new Properties();
 		configuration.load(new StringReader(properties));
@@ -637,7 +653,7 @@ public class ProblemParser {
 			parseTransportTimes(file);
 		}
 	}
-	
+
 	public void parseTransportTimes(File transportFile) throws IOException {
 
 		if (transportFile != null) {
@@ -647,6 +663,7 @@ public class ProblemParser {
 			reader.close();
 		}
 	}
+
 	public void parseTransportTimesString(String transportString) throws IOException {
 		BufferedReader reader = new BufferedReader(new StringReader(transportString));
 		parseTransportTimes(reader);
@@ -658,7 +675,7 @@ public class ProblemParser {
 		// try also travel time
 		travelTimes = new int[machines][];
 		String currentLine = reader.readLine();
-		if(currentLine!=null) {
+		if (currentLine != null) {
 			for (int machine = 0; currentLine != null && machine < machines; machine++) {
 				initTravelTimes = true;
 				// one line per machine
@@ -672,7 +689,7 @@ public class ProblemParser {
 				currentLine = reader.readLine();
 			}
 		}
-		
+
 		if (!initTravelTimes) {
 			// we don't have times: init w/ 0
 			travelTimes = new int[machines][];
@@ -684,6 +701,5 @@ public class ProblemParser {
 			}
 		}
 	}
-	
-	
+
 }
