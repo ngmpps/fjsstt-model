@@ -23,7 +23,7 @@ public class Solution implements Serializable {
 	 * The job bids, each one representing the solution of a job-level
 	 * subproblem. Indices are jobs.
 	 */
-	final Bid[] bids;
+	final Map<Integer, Bid> bids;
 
 	/**
 	 * The begin times of job operations.
@@ -76,7 +76,7 @@ public class Solution implements Serializable {
 		operationsMachineAssignments = new TreeMap<Integer, int[]>();
 		multipliers = new double[machines][timeslots];
 		subgradients = new int[0][];
-		bids = new Bid[0];
+		bids = new TreeMap<Integer,Bid>();
 		objectiveValue = Double.NEGATIVE_INFINITY;
 	}
 
@@ -84,12 +84,12 @@ public class Solution implements Serializable {
 		this(objectiveValue, machines, timeslots, maxOperationsPerJob, null, 0, new int[machines][timeslots]);
 	}
 
-	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Bid[] bids,
+	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Map<Integer,Bid> bids,
 			final int iteration, final int[][] subgradients) {
 		this(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients, null);
 	}
 
-	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Bid[] bids,
+	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Map<Integer,Bid> bids,
 			final int iteration, final int[][] subgradients, final double[][] multipliers) {
 		this.objectiveValue = objectiveValue;
 		this.bids = bids;
@@ -106,7 +106,7 @@ public class Solution implements Serializable {
 		// for all jobs and operations: compile the arrays for optimal machine
 		// assignments and completion times for operations
 		if (this.bids != null) {
-			for (final Bid bid : this.bids) {
+			for (final Bid bid : this.bids.values()) {
 				final int job = bid.getJobID();
 				final int[] machineAssignments = bid.getOptimumMachines();
 				final int[] beginTimes = bid.getOptimumBeginTimes();
@@ -224,7 +224,7 @@ public class Solution implements Serializable {
 	/**
 	 * @return the mBids
 	 */
-	public Bid[] getBids() {
+	public Map<Integer,Bid> getBids() {
 		return bids;
 	}
 
@@ -300,7 +300,7 @@ public class Solution implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Solution{" + ", objectiveValue=" + objectiveValue + ", bids=" + Arrays.toString(bids) + ", operationsBeginTimes="
+		return "Solution{" + ", objectiveValue=" + objectiveValue + ", bids=" + bids.toString() + ", operationsBeginTimes="
 				+ operationsBeginTimes.toString() + ", operationsMachineAssignments=" + operationsMachineAssignments.toString() + ", iteration="
 				+ iteration + ", subgradients=" + Arrays.toString(subgradients) + ", multipliers=" + Arrays.toString(multipliers) + '}';
 	}

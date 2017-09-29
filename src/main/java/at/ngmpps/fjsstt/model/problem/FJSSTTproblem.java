@@ -175,6 +175,7 @@ public class FJSSTTproblem implements Serializable {
 			newID = key>=newID?key+1:newID;
 		return newID;
 	}
+	
 	public Integer addJob(Integer operations, int[][] processTimes, Integer dueDate, Integer jobWeight) {
 		Integer newID = addJob();
 		this.operations.put(newID, operations);
