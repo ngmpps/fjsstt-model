@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,7 +156,7 @@ public class FJSSTTproblem implements Serializable {
 	 * @return An integer array of average maximum slacks. Indices are jobs.
 	 */
 	public Map<Integer, Integer> calcAverageMaxSlacks() {
-		Map<Integer, Integer> averageMaxSlacks = new TreeMap<Integer, Integer>();
+		Map<Integer, Integer> averageMaxSlacks = new HashMap<Integer, Integer>();
 		for (Integer job : operations.keySet()) {
 			int jobSlack = Math.max(0, dueDates.get(job) - this.calcMinJobCompletionTime(job));
 			Double averageMaxSlack = (double) jobSlack / (operations.get(job));

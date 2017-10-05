@@ -3,7 +3,7 @@ package at.ngmpps.fjsstt.model.problem;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 import at.ngmpps.fjsstt.model.problem.subproblem.Bid;
 
@@ -72,11 +72,11 @@ public class Solution implements Serializable {
 		this.timeslots = timeslots;
 		this.maxOperationsPerJob = maxOperationsPerJob;
 
-		operationsBeginTimes = new TreeMap<Integer, int[]>();
-		operationsMachineAssignments = new TreeMap<Integer, int[]>();
+		operationsBeginTimes = new HashMap<Integer, int[]>();
+		operationsMachineAssignments = new HashMap<Integer, int[]>();
 		multipliers = new double[machines][timeslots];
 		subgradients = new int[0][];
-		bids = new TreeMap<Integer,Bid>();
+		bids = new HashMap<Integer,Bid>();
 		objectiveValue = Double.NEGATIVE_INFINITY;
 	}
 
@@ -99,8 +99,8 @@ public class Solution implements Serializable {
 		this.timeslots = timeslots;
 		this.maxOperationsPerJob = maxOperationsPerJob;
 
-		operationsBeginTimes = new TreeMap<Integer, int[]>();
-		operationsMachineAssignments = new TreeMap<Integer, int[]>();
+		operationsBeginTimes = new HashMap<Integer, int[]>();
+		operationsMachineAssignments = new HashMap<Integer, int[]>();
 		this.multipliers = new double[machines][timeslots];
 
 		// for all jobs and operations: compile the arrays for optimal machine
