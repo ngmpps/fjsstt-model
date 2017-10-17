@@ -82,6 +82,12 @@ public class SubproblemInstance implements Serializable {
 	 * The job's due date.
 	 */
 	int dueDate;
+	
+	/**
+    * The begin time of the planning horizon, i.e. the release time for the job.
+    */
+   int horizonStart = 0;
+
 
 	int timezoneLength = 0;
 
@@ -99,7 +105,12 @@ public class SubproblemInstance implements Serializable {
 	}
 
 	public SubproblemInstance(final int id, final int operations, final int machines, final int timeslots,
-			final Map<Integer, List<Integer>> altMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate,
+			final Map<Integer, List<Integer>> altMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate, 
+			final int jobWeight, final Objective objective) {
+		this(id, operations, machines, timeslots, altMachines, processTimes, travelTimes, dueDate, 0, jobWeight, objective);
+	}
+	public SubproblemInstance(final int id, final int operations, final int machines, final int timeslots,
+			final Map<Integer, List<Integer>> altMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate, final int horizonStart,
 			final int jobWeight, final Objective objective) {
 		this.jobID = id;
 		this.operations = operations;
@@ -109,6 +120,7 @@ public class SubproblemInstance implements Serializable {
 		this.processTimes = processTimes;
 		this.travelTimes = travelTimes;
 		this.dueDate = dueDate;
+		this.horizonStart = horizonStart;
 		this.jobWeight = jobWeight;
 		this.objective = objective;
 		this.multipliers = new double[machines][timeSlots];
@@ -280,6 +292,11 @@ public class SubproblemInstance implements Serializable {
 		return dueDate;
 	}
 
+	public int getHorizonStart() {
+		return horizonStart;
+	}
+
+
 	public int getJobID() {
 		return jobID;
 	}
@@ -340,6 +357,10 @@ public class SubproblemInstance implements Serializable {
 
 	public void setDueDate(int dueDate) {
 		this.dueDate = dueDate;
+	}
+
+	public void setHorizonStart(int horizonStart) {
+		this.horizonStart = horizonStart;
 	}
 
 	public void setJobID(int jobID) {
