@@ -176,7 +176,7 @@ public class FJSSTTproblem implements Serializable {
 		return newID;
 	}
 	
-	public Integer addJob(Integer operations, int[][] processTimes, Integer dueDate, Integer jobWeight) {
+	public Integer addJob(Integer operations, int[][] processTimes, Map<Integer,List<Integer>> altMachines, Integer dueDate, Integer jobWeight) {
 		Integer newID = addJob();
 		this.operations.put(newID, operations);
 		this.dueDates.put(newID, dueDate);
@@ -184,6 +184,9 @@ public class FJSSTTproblem implements Serializable {
 		this.processTimes.put(newID,  processTimes);
 		if(operations>maxOperations)
 			maxOperations=operations;
+		for(Integer op:altMachines.keySet()) {
+			this.altMachines.put(""+newID+"-"+op, altMachines.get(op));
+		}
 		return newID;
 	}
 	public void removeJob(Integer jobID)  {
