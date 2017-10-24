@@ -189,11 +189,24 @@ public class FJSSTTproblem implements Serializable {
 		}
 		return newID;
 	}
+	
 	public void removeJob(Integer jobID)  {
-		this.operations.remove(jobID);
+		Integer nrOps = operations.remove(jobID);
 		this.dueDates.remove(jobID);
 		this.jobWeights.remove(jobID);
 		this.processTimes.remove(jobID);
+		for(int i=0;i<nrOps;++i)
+			if(altMachines.containsKey(""+jobID+"-"+i))
+				altMachines.remove(""+jobID+"-"+i);
+		//OK; > should never happen; 
+		//eventually reduce maxOps
+		if(nrOps>=maxOperations) {
+			maxOperations = 0;
+			for(Integer ops: operations.values())
+				if(ops>maxOperations)
+					maxOperations=ops;
+		}
+			
 	}
 	
 	/**
