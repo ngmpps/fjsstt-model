@@ -343,7 +343,7 @@ public class ProblemParser {
 				return Integer.parseInt(trimm(prop));
 			}
 		}
-		logger.error("Property Key {} not found or emtpy in Config {}.", key, config.toString());
+		logger.error("Property Key {} not found or emtpy; default: {} Config: {}.", key, defaultVal, config.toString());
 		if (defaultVal != null)
 			return defaultVal;
 		return 0;

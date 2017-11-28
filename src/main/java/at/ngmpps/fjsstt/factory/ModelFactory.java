@@ -100,7 +100,7 @@ public class ModelFactory {
 						+ "SurrogateSearch.InitialStepsize=0.2\n" + "SubgradientSearch.SearchType=Both\n"
 						+ "SubproblemSolver.type=VariableNeighbourhoodSearch\n" + "SimpleSearch.IterationsUntilHalvingAlpha=20\n"
 						+ "SubproblemSolver.LS_altMachine_tries=1\n" + "SurrogateSearch.NrRuns=10\n" + "SubproblemSolver.MinMaxShiftDistance=50\n"
-						+ "SimpleSearch.IterationsUntilFeasibilityRepair=2\n");
+						+ "SubproblemSolver.Execution.Time=10\n" + "SimpleSearch.IterationsUntilFeasibilityRepair=2\n");
 		return ps;
 	}
 
