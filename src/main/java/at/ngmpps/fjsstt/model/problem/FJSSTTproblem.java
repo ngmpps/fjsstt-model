@@ -3,6 +3,7 @@ package at.ngmpps.fjsstt.model.problem;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -567,4 +568,56 @@ public class FJSSTTproblem implements Serializable {
 	public void setTravelTimes(final int[][] mTravelTimes) {
 		this.travelTimes = mTravelTimes;
 	}
+	
+	public FJSSTTproblem clone() {
+
+		HashMap<Integer, Integer> operations2 = new HashMap<Integer,Integer>();
+		for(Integer key : operations.keySet())
+			operations2.put(key, operations.get(key));
+
+		final HashMap<String, List<Integer>> altMachines2 = new HashMap<String,List<Integer>>();
+		for(String key : altMachines.keySet()) {
+			List<Integer> altm2 = new ArrayList<Integer>();
+			for(Integer val : altMachines.get(key)) {
+				altm2.add(val);
+			}
+			altMachines2.put(key,altm2);
+		}
+
+		HashMap<Integer, int[][]> processTimes2 = new HashMap<Integer, int[][]>();
+		for(Integer key : processTimes.keySet()) {
+			int[][] oldval = processTimes.get(key);
+			int[][] val = new int[oldval.length][];
+			for(int i=0;i<val.length;++i) {
+				int oldval2[] = oldval[i];
+				val[i] = Arrays.copyOf(oldval2,oldval2.length);
+			}
+			processTimes2.put(key,val);
+		}
+
+		int[][] travelTimes2  = new int[travelTimes.length][];
+		for(int i=0;i<travelTimes2.length;++i) {
+			int oldval2[] = travelTimes[i];
+			travelTimes2[i] = Arrays.copyOf(oldval2,oldval2.length);
+		}
+		
+		HashMap<Integer, Integer> dueDates2 = new HashMap<Integer,Integer>();
+		for(Integer key : dueDates.keySet())
+			dueDates2.put(key, dueDates.get(key));
+
+		HashMap<Integer, Integer> jobWeights2 = new HashMap<Integer,Integer>();
+		for(Integer key : jobWeights.keySet())
+			jobWeights2.put(key, jobWeights.get(key));
+		
+
+		Properties configurations2 = (Properties) configurations.clone();
+
+		FJSSTTproblem result = new FJSSTTproblem(operations2, maxOperations, machines, timeSlots,
+				altMachines2, processTimes2, travelTimes2,
+				dueDates2, objective, jobWeights2,
+				configurations2);
+		result.setProblemId(getProblemId());
+		return result;
+	}
+	
 }
