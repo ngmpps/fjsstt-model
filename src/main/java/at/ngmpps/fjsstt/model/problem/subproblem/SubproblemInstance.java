@@ -92,7 +92,9 @@ public class SubproblemInstance implements Serializable {
 	int timezoneLength = 0;
 
 	double timezoneFactor = 0;
-
+	
+	Map<Integer, List<Integer>> altMachinesOriginal;
+	
 	/**
 	 * The optimisation objective, default is TARDINESS.
 	 */
@@ -109,6 +111,7 @@ public class SubproblemInstance implements Serializable {
 			final int jobWeight, final Objective objective) {
 		this(id, operations, machines, timeslots, altMachines, processTimes, travelTimes, dueDate, 0, jobWeight, objective);
 	}
+	
 	public SubproblemInstance(final int id, final int operations, final int machines, final int timeslots,
 			final Map<Integer, List<Integer>> altMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate, final int horizonStart,
 			final int jobWeight, final Objective objective) {
@@ -124,6 +127,26 @@ public class SubproblemInstance implements Serializable {
 		this.jobWeight = jobWeight;
 		this.objective = objective;
 		this.multipliers = new double[machines][timeSlots];
+	}
+	
+	public SubproblemInstance(final int id, final int operations, final int machines, final int timeslots,
+			final Map<Integer, List<Integer>> altMachines, final Map<Integer, List<Integer>> altOriginalMachines, final int[][] processTimes, final int[][] travelTimes, final int dueDate, final int horizonStart,
+			final int jobWeight, final Objective objective) {
+		this(id, operations, machines, timeslots, altMachines, processTimes, travelTimes, dueDate, horizonStart, jobWeight, objective);
+		this.altMachinesOriginal = altOriginalMachines;
+	}
+	
+	/**
+	 *  List of Machines per Job from the original Problem (before machines fail or recover)
+	 */
+	public Map<Integer, List<Integer>> getAltMachinesOriginal(){
+		return altMachinesOriginal;
+	}
+	/**
+	 *  List of Machines per Job from the original Problem (before machines fail or recover)
+	 */
+	public void setAltMachinesOriginal(Map<Integer, List<Integer>> altOriginalMachines){
+		altMachinesOriginal = altOriginalMachines;
 	}
 
 	/**
