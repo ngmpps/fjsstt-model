@@ -120,6 +120,8 @@ public class SubproblemInstance implements Serializable {
 		this.machines = machines;
 		this.timeSlots = timeslots;
 		this.altMachines = altMachines;
+		// to have a value.
+		this.altMachinesOriginal = altMachines;
 		this.processTimes = processTimes;
 		this.travelTimes = travelTimes;
 		this.dueDate = dueDate;
