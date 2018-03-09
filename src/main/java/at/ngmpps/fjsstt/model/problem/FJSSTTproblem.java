@@ -178,7 +178,9 @@ public class FJSSTTproblem implements Serializable {
 	}
 	
 	public Integer addJob(Integer operations, int[][] processTimes, Map<Integer,List<Integer>> altMachines, Integer dueDate, Integer jobWeight) {
-		Integer newID = addJob();
+		return addJob(addJob(), processTimes, altMachines, dueDate, jobWeight);
+	}
+	public Integer addJob(Integer newID, Integer operations, int[][] processTimes, Map<Integer,List<Integer>> altMachines, Integer dueDate, Integer jobWeight) {
 		this.operations.put(newID, operations);
 		this.dueDates.put(newID, dueDate);
 		this.jobWeights.put(newID, jobWeight);
@@ -190,6 +192,11 @@ public class FJSSTTproblem implements Serializable {
 		}
 		return newID;
 	}
+	public Integer restoreJob(int jobId, FJSSTTproblem problem_job) {
+		return addJob(jobId, problem_job.getOperations().get(jobId), problem_job.getProcessTimes().get(jobId), problem_job.getAltMachines(jobId), problem_job.getDueDates().get(jobId),problem_job.getJobWeights().get(jobId));
+		
+	}
+
 	
 	public void removeJob(Integer jobID)  {
 		Integer nrOps = operations.remove(jobID);
@@ -447,6 +454,15 @@ public class FJSSTTproblem implements Serializable {
 
 	public List<Integer> getAltMachines(int job, int op) {
 		return altMachines.get(job + "-" + op);
+	}
+	
+	public Map<Integer,List<Integer>> getAltMachines(int job) {
+		Map<Integer,List<Integer>> result = new HashMap<Integer,List<Integer>>();
+		for(String key: altMachines.keySet())
+			if(key.startsWith(job+"-"))
+				result.put(Integer.parseInt(key.substring(key.indexOf('-')+1)), altMachines.get(key));
+		
+		return result; 
 	}
 
 	public Properties getConfigurations() {
