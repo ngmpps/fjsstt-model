@@ -178,8 +178,9 @@ public class FJSSTTproblem implements Serializable {
 	}
 	
 	public Integer addJob(Integer operations, int[][] processTimes, Map<Integer,List<Integer>> altMachines, Integer dueDate, Integer jobWeight) {
-		return addJob(addJob(), processTimes, altMachines, dueDate, jobWeight);
+		return addJob(addJob(), operations, processTimes, altMachines, dueDate, jobWeight);
 	}
+	
 	public Integer addJob(Integer newID, Integer operations, int[][] processTimes, Map<Integer,List<Integer>> altMachines, Integer dueDate, Integer jobWeight) {
 		this.operations.put(newID, operations);
 		this.dueDates.put(newID, dueDate);
