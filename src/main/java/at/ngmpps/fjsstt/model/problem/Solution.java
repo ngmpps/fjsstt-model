@@ -3,6 +3,7 @@ package at.ngmpps.fjsstt.model.problem;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.HashMap;
 
 import at.ngmpps.fjsstt.model.problem.subproblem.Bid;
@@ -174,7 +175,19 @@ public class Solution implements Serializable {
 	}
 	
 	public Solution clone() {
-		Solution result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients);
+		return clone(0);
+	}
+	protected Solution clone(int reduce) {
+		Solution result = null;
+		if(reduce == 1) {
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, subgradients);
+		} else if(reduce == 2) {
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, null);
+		} else if(reduce == 3) {
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, null, null);
+		} else //if (reduce == 0) 
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients);
+		
 //		if (operationsBeginTimes != null)
 //			for (int i : operationsBeginTimes.keySet())
 //				for (int ii = 0; ii < operationsBeginTimes.get(i).length; ++ii)
@@ -195,6 +208,14 @@ public class Solution implements Serializable {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * clone without bids, subgradients, multipliers
+	 * @return
+	 */
+	public Solution cloneReducedSize() {
+		return clone(3);
 	}
 
 	/**
@@ -300,8 +321,13 @@ public class Solution implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Solution{" + ", objectiveValue=" + objectiveValue + ", bids=" + bids.toString() + ", operationsBeginTimes="
-				+ operationsBeginTimes.toString() + ", operationsMachineAssignments=" + operationsMachineAssignments.toString() + ", iteration="
-				+ iteration + ", subgradients=" + Arrays.toString(subgradients) + ", multipliers=" + Arrays.toString(multipliers) + '}';
+		return "Solution{" + ", objectiveValue=" + objectiveValue 
+				+ ", bids=" + (bids!=null ? bids.toString() : "null") 
+				+ ", operationsBeginTimes=" + (operationsBeginTimes!=null ? operationsBeginTimes.toString() : "null") 
+				+ ", operationsMachineAssignments=" + (operationsMachineAssignments!=null ? operationsMachineAssignments.toString() : "null") 
+				+ ", iteration=" + iteration 
+				+ ", subgradients=" + (subgradients != null ? Arrays.toString(subgradients) : "null") 
+				+ ", multipliers=" + (multipliers != null ? Arrays.toString(multipliers):"null") 
+				+ '}';
 	}
 }
