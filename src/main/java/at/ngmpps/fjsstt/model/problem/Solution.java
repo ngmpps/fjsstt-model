@@ -287,7 +287,7 @@ public class Solution implements Serializable {
 		return subgradients;
 	}
 
-	public void setRunTime(int valuefoundAtRuntime) {
+	public void setRunTime(long valuefoundAtRuntime) {
 		runTime = valuefoundAtRuntime;
 	}
 
