@@ -2,9 +2,8 @@ package at.ngmpps.fjsstt.model.problem;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.HashMap;
+import java.util.Map;
 
 import at.ngmpps.fjsstt.model.problem.subproblem.Bid;
 
@@ -37,9 +36,9 @@ public class Solution implements Serializable {
 	final Map<Integer, int[]> operationsMachineAssignments;
 
 	/**
-	 * The iteration in which the solution was found.
+	 * The time at which the solution was found.
 	 */
-	int iteration;
+	long runTime;
 
 	/**
 	 * The subgradient values resulting from mOperationsBeginTimes and
@@ -82,19 +81,19 @@ public class Solution implements Serializable {
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob) {
-		this(objectiveValue, machines, timeslots, maxOperationsPerJob, null, 0, new int[machines][timeslots]);
+		this(objectiveValue, machines, timeslots, maxOperationsPerJob, null, 0l, new int[machines][timeslots]);
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Map<Integer,Bid> bids,
-			final int iteration, final int[][] subgradients) {
-		this(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients, null);
+			final long runtime, final int[][] subgradients) {
+		this(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, runtime, subgradients, null);
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Map<Integer,Bid> bids,
-			final int iteration, final int[][] subgradients, final double[][] multipliers) {
+			final long runtime, final int[][] subgradients, final double[][] multipliers) {
 		this.objectiveValue = objectiveValue;
 		this.bids = bids;
-		this.iteration = iteration;
+		this.runTime = runtime;
 		this.subgradients = subgradients;
 		this.machines = machines;
 		this.timeslots = timeslots;
@@ -139,10 +138,10 @@ public class Solution implements Serializable {
 	}
 
 	public Solution(final double objectiveValue, final Map<Integer, int[]> begTimes, final Map<Integer, int[]> machAss,
-			final int iteration) {
+			final long runtime) {
 		this.objectiveValue = objectiveValue;
 		this.bids = null;
-		this.iteration = iteration;
+		this.runTime = runtime;
 
 		this.operationsBeginTimes = begTimes;
 		this.operationsMachineAssignments = machAss;
@@ -180,13 +179,13 @@ public class Solution implements Serializable {
 	protected Solution clone(int reduce) {
 		Solution result = null;
 		if(reduce == 1) {
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, subgradients);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, runTime, subgradients);
 		} else if(reduce == 2) {
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, null);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, runTime, null);
 		} else if(reduce == 3) {
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, null, null);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, runTime, null, null);
 		} else //if (reduce == 0) 
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, runTime, subgradients);
 		
 //		if (operationsBeginTimes != null)
 //			for (int i : operationsBeginTimes.keySet())
@@ -252,8 +251,8 @@ public class Solution implements Serializable {
 	/**
 	 * @return the mIteration
 	 */
-	public int getIteration() {
-		return iteration;
+	public long getRunTime() {
+		return runTime;
 	}
 
 	public double[][] getMultipliers() {
@@ -288,8 +287,8 @@ public class Solution implements Serializable {
 		return subgradients;
 	}
 
-	public void setIteration(int bestvaluefoundiniteration) {
-		iteration = bestvaluefoundiniteration;
+	public void setRunTime(int valuefoundAtRuntime) {
+		runTime = valuefoundAtRuntime;
 	}
 
 	public void setObjectiveValue(double newvalue) {
@@ -325,7 +324,7 @@ public class Solution implements Serializable {
 				+ ", bids=" + (bids!=null ? bids.toString() : "null") 
 				+ ", operationsBeginTimes=" + (operationsBeginTimes!=null ? operationsBeginTimes.toString() : "null") 
 				+ ", operationsMachineAssignments=" + (operationsMachineAssignments!=null ? operationsMachineAssignments.toString() : "null") 
-				+ ", iteration=" + iteration 
+				+ ", runTime=" + runTime
 				+ ", subgradients=" + (subgradients != null ? Arrays.toString(subgradients) : "null") 
 				+ ", multipliers=" + (multipliers != null ? Arrays.toString(multipliers):"null") 
 				+ '}';
