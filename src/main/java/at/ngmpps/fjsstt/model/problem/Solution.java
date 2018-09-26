@@ -38,7 +38,7 @@ public class Solution implements Serializable {
 	/**
 	 * The time at which the solution was found.
 	 */
-	long runTime;
+	int iteration;
 
 	/**
 	 * The subgradient values resulting from mOperationsBeginTimes and
@@ -81,19 +81,19 @@ public class Solution implements Serializable {
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob) {
-		this(objectiveValue, machines, timeslots, maxOperationsPerJob, null, 0l, new int[machines][timeslots]);
+		this(objectiveValue, machines, timeslots, maxOperationsPerJob, null, 0, new int[machines][timeslots]);
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Map<Integer,Bid> bids,
-			final long runtime, final int[][] subgradients) {
-		this(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, runtime, subgradients, null);
+			final int iteration, final int[][] subgradients) {
+		this(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients, null);
 	}
 
 	public Solution(final double objectiveValue, final int machines, final int timeslots, final int maxOperationsPerJob, final Map<Integer,Bid> bids,
-			final long runtime, final int[][] subgradients, final double[][] multipliers) {
+			final int iteration, final int[][] subgradients, final double[][] multipliers) {
 		this.objectiveValue = objectiveValue;
 		this.bids = bids;
-		this.runTime = runtime;
+		this.iteration = iteration;
 		this.subgradients = subgradients;
 		this.machines = machines;
 		this.timeslots = timeslots;
@@ -138,10 +138,10 @@ public class Solution implements Serializable {
 	}
 
 	public Solution(final double objectiveValue, final Map<Integer, int[]> begTimes, final Map<Integer, int[]> machAss,
-			final long runtime) {
+			final int iteration) {
 		this.objectiveValue = objectiveValue;
 		this.bids = null;
-		this.runTime = runtime;
+		this.iteration = iteration;
 
 		this.operationsBeginTimes = begTimes;
 		this.operationsMachineAssignments = machAss;
@@ -179,13 +179,13 @@ public class Solution implements Serializable {
 	protected Solution clone(int reduce) {
 		Solution result = null;
 		if(reduce == 1) {
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, runTime, subgradients);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, subgradients);
 		} else if(reduce == 2) {
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, runTime, null);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, null);
 		} else if(reduce == 3) {
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, runTime, null, null);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, null, iteration, null, null);
 		} else //if (reduce == 0) 
-			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, runTime, subgradients);
+			result = new Solution(objectiveValue, machines, timeslots, maxOperationsPerJob, bids, iteration, subgradients);
 		
 //		if (operationsBeginTimes != null)
 //			for (int i : operationsBeginTimes.keySet())
@@ -251,8 +251,8 @@ public class Solution implements Serializable {
 	/**
 	 * @return the mIteration
 	 */
-	public long getRunTime() {
-		return runTime;
+	public long getIteration() {
+		return iteration;
 	}
 
 	public double[][] getMultipliers() {
@@ -287,8 +287,8 @@ public class Solution implements Serializable {
 		return subgradients;
 	}
 
-	public void setRunTime(long valuefoundAtRuntime) {
-		runTime = valuefoundAtRuntime;
+	public void setIteration(int valuefoundAtIteration) {
+		iteration = valuefoundAtIteration;
 	}
 
 	public void setObjectiveValue(double newvalue) {
@@ -324,7 +324,7 @@ public class Solution implements Serializable {
 				+ ", bids=" + (bids!=null ? bids.toString() : "null") 
 				+ ", operationsBeginTimes=" + (operationsBeginTimes!=null ? operationsBeginTimes.toString() : "null") 
 				+ ", operationsMachineAssignments=" + (operationsMachineAssignments!=null ? operationsMachineAssignments.toString() : "null") 
-				+ ", runTime=" + runTime
+				+ ", iteration=" + iteration
 				+ ", subgradients=" + (subgradients != null ? Arrays.toString(subgradients) : "null") 
 				+ ", multipliers=" + (multipliers != null ? Arrays.toString(multipliers):"null") 
 				+ '}';
