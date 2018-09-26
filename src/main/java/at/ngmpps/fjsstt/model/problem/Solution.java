@@ -251,7 +251,7 @@ public class Solution implements Serializable {
 	/**
 	 * @return the mIteration
 	 */
-	public long getIteration() {
+	public int getIteration() {
 		return iteration;
 	}
 
