@@ -484,6 +484,10 @@ public class FJSSTTproblem implements Serializable {
 		return machines;
 	}
 
+	public int getJobs() {
+		return jobWeights.size();
+	}
+
 	/**
 	 * @return the mMaxOperations
 	 */
