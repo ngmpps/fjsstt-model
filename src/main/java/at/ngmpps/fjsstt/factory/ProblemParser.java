@@ -69,7 +69,10 @@ public class ProblemParser {
 
 	// per job
 	Map<Integer, Integer> dueDates;
-
+	
+	// per job
+	Map<Integer, Integer> releaseTimes;
+	
 	// job priorities
 	Map<Integer, Integer> jobWeights;
 
@@ -380,7 +383,7 @@ public class ProblemParser {
 
 	public FJSSTTproblem getProblem() {
 		FJSSTTproblem problem = new FJSSTTproblem(operations, maxOperations, machines, timeslotsMaxDueDate, altMachines, processTimes,
-				travelTimes, dueDates, objective, jobWeights, configuration);
+				travelTimes, dueDates, objective, jobWeights, configuration, releaseTimes);
 		if (configuration != null && configuration.containsKey(ProblemParser.SEARCH_NR_TIME_SLOTS_KEY))
 			problem.setTimeSlots(Integer.parseInt(configuration.getProperty(ProblemParser.SEARCH_NR_TIME_SLOTS_KEY)));
 		return problem;
@@ -542,9 +545,8 @@ public class ProblemParser {
 			// !!! need to adjust machineID: id=1 here its 0
 			final String operationsForJob = operationsLine.group(2);
 
-			// TODO releaseTime is not used; keep this line to keep the
-			// semantics of this value
-			final int releaseTime = new Integer(operationsLine.group(3));
+			Integer releaseTime = new Integer(operationsLine.group(3));
+			releaseTimes.put(j, releaseTime);
 
 			// there is a semantic difference between L. Mönch's DueDate
 			// (time point)
