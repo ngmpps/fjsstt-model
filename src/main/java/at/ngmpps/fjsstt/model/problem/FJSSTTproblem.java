@@ -92,6 +92,11 @@ public class FJSSTTproblem implements Serializable {
 	 * The job's due dates, indices are jobs.
 	 */
 	final Map<Integer, Integer> dueDates;
+	
+	/**
+	 * The job release times.
+	 */
+	final Map<Integer, Integer> releaseTimes;
 
 	/**
 	 * The objective function to be minimised on job level.
@@ -124,6 +129,26 @@ public class FJSSTTproblem implements Serializable {
 	 */
 	public FJSSTTproblem(final Map<Integer, Integer> operations, final int maxOperations, final int machines, final int timeslots,
 			final HashMap<String, List<Integer>> altMachines, final Map<Integer, int[][]> processTimes, final int[][] travelTimes,
+			final Map<Integer, Integer> dueDates, final Objective objective, final Map<Integer, Integer> weights, final Map<Integer, Integer> releaseTimes) {
+
+		this.operations = operations;
+		this.maxOperations = maxOperations;
+		this.machines = machines;
+		this.setTimeSlots(timeslots);
+		this.altMachines = altMachines;
+		this.processTimes = processTimes;
+		if (travelTimes == null || travelTimes.length != machines)
+			this.travelTimes = new int[machines][machines];
+		else
+			this.travelTimes = travelTimes;
+		this.dueDates = dueDates;
+		this.objective = objective;
+		this.jobWeights = weights;
+		this.releaseTimes = releaseTimes;
+	}
+	
+	public FJSSTTproblem(final Map<Integer, Integer> operations, final int maxOperations, final int machines, final int timeslots,
+			final HashMap<String, List<Integer>> altMachines, final Map<Integer, int[][]> processTimes, final int[][] travelTimes,
 			final Map<Integer, Integer> dueDates, final Objective objective, final Map<Integer, Integer> weights) {
 
 		this.operations = operations;
@@ -139,6 +164,10 @@ public class FJSSTTproblem implements Serializable {
 		this.dueDates = dueDates;
 		this.objective = objective;
 		this.jobWeights = weights;
+		releaseTimes = new HashMap<Integer, Integer>();
+		for(int j = 0; j < operations.keySet().size(); j++){
+			releaseTimes.put(j, 0);
+		}
 	}
 
 	public FJSSTTproblem(final Map<Integer, Integer> operations, final int maxOperations, final int machines, final int timeslots,
@@ -146,6 +175,14 @@ public class FJSSTTproblem implements Serializable {
 			final Map<Integer, Integer> dueDates, final Objective objective, final Map<Integer, Integer> weights,
 			final Properties configurations) {
 		this(operations, maxOperations, machines, timeslots, altMachines, processTimes, travelTimes, dueDates, objective, weights);
+		this.configurations = configurations;
+	}
+	
+	public FJSSTTproblem(final Map<Integer, Integer> operations, final int maxOperations, final int machines, final int timeslots,
+			final HashMap<String, List<Integer>> altMachines, final Map<Integer, int[][]> processTimes, final int[][] travelTimes,
+			final Map<Integer, Integer> dueDates, final Objective objective, final Map<Integer, Integer> weights,
+			final Properties configurations, final Map<Integer, Integer> releaseTimes) {
+		this(operations, maxOperations, machines, timeslots, altMachines, processTimes, travelTimes, dueDates, objective, weights, releaseTimes);
 		this.configurations = configurations;
 	}
 
