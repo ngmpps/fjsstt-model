@@ -670,13 +670,17 @@ public class FJSSTTproblem implements Serializable {
 		for(Integer key : jobWeights.keySet())
 			jobWeights2.put(key, jobWeights.get(key));
 		
+		HashMap<Integer, Integer> releaseTimes2 = new HashMap<Integer,Integer>();
+		for(Integer key : releaseTimes.keySet())
+			releaseTimes2.put(key, releaseTimes.get(key));
+		
 
 		Properties configurations2 = (Properties) configurations.clone();
 
 		FJSSTTproblem result = new FJSSTTproblem(operations2, maxOperations, machines, timeSlots,
 				altMachines2, processTimes2, travelTimes2,
 				dueDates2, objective, jobWeights2,
-				configurations2);
+				configurations2, releaseTimes2);
 		result.setProblemId(getProblemId());
 		return result;
 	}
