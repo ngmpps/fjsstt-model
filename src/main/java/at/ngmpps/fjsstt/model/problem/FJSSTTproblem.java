@@ -51,7 +51,7 @@ public class FJSSTTproblem implements Serializable {
 	 * operations for job i is {0,...,mOperations[i]-1}; It is assumed that the
 	 * operations are to be processed in the order 0,...,mOperations[i] - 1.
 	 */
-	final Map<Integer, Integer> operations;
+	Map<Integer, Integer> operations;
 
 	/**
 	 * The maximum number of operations of a job.
@@ -61,7 +61,11 @@ public class FJSSTTproblem implements Serializable {
 	/**
 	 * The number of machines. The set of machines is {0,...,mMachines-1};
 	 */
-	final int machines;
+	int machines;
+
+	public Map<String, List<Integer>> getAltMachines() {
+		return altMachines;
+	}
 
 	/**
 	 * The number of time units, indexed by {0,...,mTimeUnits - 1}. Each
@@ -96,7 +100,7 @@ public class FJSSTTproblem implements Serializable {
 	/**
 	 * The job release times.
 	 */
-	final Map<Integer, Integer> releaseTimes;
+	Map<Integer, Integer> releaseTimes;
 
 	/**
 	 * The objective function to be minimised on job level.
@@ -675,6 +679,14 @@ public class FJSSTTproblem implements Serializable {
 				configurations2);
 		result.setProblemId(getProblemId());
 		return result;
+	}
+
+	public Map<Integer, Integer> getReleaseTimes() {
+		return releaseTimes;
+	}
+
+	public void setReleaseTimes(Map<Integer, Integer> releaseTimes) {
+		this.releaseTimes = releaseTimes;
 	}
 	
 }
