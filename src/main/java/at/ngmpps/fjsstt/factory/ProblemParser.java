@@ -517,15 +517,17 @@ public class ProblemParser {
 		// jobs = Integer.parseInt(firstline.group(1));
 		machines = Integer.parseInt(firstline.group(2));
 
-		dueDates = new TreeMap<Integer, Integer>();
-		operations = new TreeMap<Integer, Integer>();
-		jobWeights = new TreeMap<Integer, Integer>();
+		dueDates = new TreeMap<>();
+		operations = new TreeMap<>();
+		jobWeights = new TreeMap<>();
 
 		// to find max, we init this with 0
 		timeslotsMaxDueDate = 0;
 		maxOperations = 0;
 
-		processTimes = new TreeMap<Integer, int[][]>();
+		processTimes = new TreeMap<>();
+		releaseTimes = new TreeMap<>();
+
 
 		int j = -1;
 		// one line per job && check for after last line (null) && check if there
