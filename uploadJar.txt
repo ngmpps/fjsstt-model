@@ -4,7 +4,7 @@ call mvn clean & mvn install first
 mvn install:install-file
  -DgroupId=at.ngmpps
  -DartifactId=at.ngmpps
- -Dversion=1.0-SNAPSHOT
+ -Dversion=1.2-SNAPSHOT
  -Dpackaging=jar
  -Dfile=[path-to-file]
  -DlocalRepositoryPath=.git
