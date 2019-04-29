@@ -2,7 +2,7 @@ package at.ngmpps.fjsstt;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,9 +24,9 @@ public class ProblemSetTest {
 	private String transport;
 	private String properties;
 	
-	private static String FJSfile = "/problems/p1/WT1.fjs";
-	private static String PropertiesFile = "/problems/p1/WT1A.PROPERTIES";
-	private static String TransportFile = "/problems/p1/WT1A.TRANSPORT";
+	private String FJSfile = "/problems/p1/WT1.fjs";
+	private String PropertiesFile = "/problems/p1/WT1A.PROPERTIES";
+	private String TransportFile = "/problems/p1/WT1A.TRANSPORT";
 
 	@Before
 	public void setUp() throws Exception {
@@ -61,8 +61,9 @@ public class ProblemSetTest {
 				this.getClass().getResource(PropertiesFile).toURI().getPath(), 
 				this.getClass().getResource(TransportFile).toURI().getPath());
 		assertNotNull(p);
-		assertEquals(p.getJobs(), p.getDueDates().size());
-		assertEquals(p.getJobs(), p.getReleaseTimes().size());
+		// no assertEquals (int, int) -> cast to long
+		assertEquals((long)p.getJobs(), (long)p.getDueDates().size());
+		assertEquals((long)p.getJobs(), (long)p.getReleaseTimes().size());
 		
 	}
 }
