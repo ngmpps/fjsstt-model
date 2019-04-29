@@ -26,7 +26,7 @@ public class ProblemParser {
 	static final Logger logger = LoggerFactory.getLogger(ProblemParser.class);
 
 	static Pattern firstlinePattern = Pattern.compile("(\\d+)\\W(\\d+)");
-	static Pattern operationsLinePattern = Pattern.compile("(\\d+)\\W(.+)(\\d+)\\W(\\d+)\\W(\\d+)");
+	static Pattern operationsLinePattern = Pattern.compile("(\\d+)\\W(.+)\\W(\\d+)\\W(\\d+)\\W(\\d+)");
 	static Pattern operationsProcessesPattern = Pattern.compile("(\\d+)");
 	static Pattern transportTimesLinePatter = Pattern.compile("(\\d+)");
 
