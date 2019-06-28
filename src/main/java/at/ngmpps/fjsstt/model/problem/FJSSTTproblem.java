@@ -84,6 +84,7 @@ public class FJSSTTproblem implements Serializable {
 	/**
 	 * The process times of operations on machines. The first index is the job,
 	 * the second index is the operation, and the third index is the machine.
+	 * process times might be Integer.MAX_VALUE (to indicate bad times)
 	 */
 	final Map<Integer, int[][]> processTimes;
 
@@ -126,6 +127,7 @@ public class FJSSTTproblem implements Serializable {
 	 *           multiplies timeslotes with factor 1.2
 	 * @param altMachines
 	 * @param processTimes
+	 * 			process times might be Integer.MAX_VALUE (to indicate bad times)
 	 * @param travelTimes
 	 * @param multipliers
 	 * @param dueDates
@@ -208,6 +210,7 @@ public class FJSSTTproblem implements Serializable {
 
 	/**
 	 * returns a new ID of a Job; need to add Operations, processTimes, dueDate and jobWeight for this individually
+	 * 
 	 * @return
 	 */
 	public Integer addJob() {
@@ -315,7 +318,8 @@ public class FJSSTTproblem implements Serializable {
 		// first stage: calculate v values for operation 0
 		List<Integer> opAltMachines = getAltMachines(job, 0);
 		for (int opMachine : opAltMachines) {
-			v[0][opMachine] = processTimes.get(job)[0][opMachine] - 1;
+			if(processTimes.get(job)[0][opMachine]<Integer.MAX_VALUE)
+				v[0][opMachine] = processTimes.get(job)[0][opMachine] - 1;
 		}
 
 		// iterative stages
@@ -329,9 +333,11 @@ public class FJSSTTproblem implements Serializable {
 				v[op][opMachine] = Integer.MAX_VALUE;
 				List<Integer> previousOpAltMachines = getAltMachines(job, previousOp);
 				for (int previousOpMachine : previousOpAltMachines) {
-					int new_v = v[op - 1][previousOpMachine] + travelTimes[previousOpMachine][opMachine] + processTimes.get(job)[op][opMachine];
-					if (new_v < v[op][opMachine]) {
-						v[op][opMachine] = new_v;
+					if(processTimes.get(job)[op][opMachine]<Integer.MAX_VALUE) {
+						int new_v = v[op - 1][previousOpMachine] + travelTimes[previousOpMachine][opMachine] + processTimes.get(job)[op][opMachine];
+						if (new_v < v[op][opMachine]) {
+							v[op][opMachine] = new_v;
+						}
 					}
 				}
 			}
@@ -547,6 +553,10 @@ public class FJSSTTproblem implements Serializable {
 		return operations;
 	}
 
+	/**
+	 * process times might be Integer.MAX_VALUE)
+	 * @return
+	 */
 	public Map<Integer, int[][]> getProcessTimes() {
 		return processTimes;
 	}

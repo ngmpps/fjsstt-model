@@ -502,6 +502,11 @@ public class ProblemParser {
 		return prob;
 	}
 
+	/**
+	 * due to conceptual difficulties we do not allow 0 as processtime duration. that will be change to 1
+	 * @param reader
+	 * @throws IOException
+	 */
 	public void parseProblem(BufferedReader reader) throws IOException {
 		// key == int[](job,operation)
 		altMachines = new HashMap<String, List<Integer>>();
@@ -586,7 +591,8 @@ public class ProblemParser {
 					altMachinesForOp.add(machine);
 					operationsProcessTimes.find();
 					final int time = new Integer(operationsProcessTimes.group());
-					processTimes.get(j)[o][machine] = time;
+					//TODO due to conceptual difficulties, we do not allow 0 as processTime. 
+					processTimes.get(j)[o][machine] = time>0?time:1;
 				}
 				final String key = j + "-" + o;
 				altMachines.put(key, altMachinesForOp);

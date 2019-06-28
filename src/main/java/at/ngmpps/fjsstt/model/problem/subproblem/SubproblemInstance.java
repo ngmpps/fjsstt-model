@@ -177,7 +177,9 @@ public class SubproblemInstance implements Serializable {
 			// operation begin time
 			final int op_beginTime = bid.getOptimumBeginTimes()[op];
 			final int op_machine = bid.getOptimumMachines()[op];
-			final int op_completionTime = op_beginTime + processTimes[op][op_machine] - 1;
+			int op_completionTime = Integer.MAX_VALUE ;
+			if(processTimes[op][op_machine] < Integer.MAX_VALUE)
+				op_completionTime = op_beginTime + processTimes[op][op_machine] - 1;
 
 			for (int k = op_beginTime; k <= op_completionTime; k++) {
 				cost += multipliers[op_machine][k];
@@ -224,7 +226,10 @@ public class SubproblemInstance implements Serializable {
 			// operation begin time
 			final int op_beginTime = bid.getOptimumBeginTimes()[op];
 			final int op_machine = bid.getOptimumMachines()[op];
-			final int op_completionTime = op_beginTime + processTimes[op][op_machine] - 1;
+			// Process Times might be Integer.MAX_VALUE
+			int op_completionTime = Integer.MAX_VALUE;
+			if(processTimes[op][op_machine]<Integer.MAX_VALUE)
+				op_completionTime = op_beginTime + processTimes[op][op_machine] - 1;
 
 			for (int k = op_beginTime; k <= op_completionTime; k++) {
 				cost += multipliers[op_machine][k];
@@ -258,8 +263,11 @@ public class SubproblemInstance implements Serializable {
 	 */
 	public double calcObjectiveValue(final Objective objective, final int beginTime, final int machine) {
 
-		// the completion time of the last operation.
-		final double compTime = beginTime + this.processTimes[operations - 1][machine] - 1;
+		// the completion time of the last operation. // processTimes might be Integer.Max_Value
+		
+		double compTime = Integer.MAX_VALUE;
+		if(processTimes[operations - 1][machine]<Integer.MAX_VALUE)
+			compTime = beginTime + this.processTimes[operations - 1][machine] - 1;
 
 		switch (objective) {
 

@@ -78,7 +78,10 @@ public class SolutionSet {
 				for (int o = 0; o < s.getOperationsBeginTimes().get(j).length && o < fjp.getProcessTimes().get(j).length; ++o) {
 					int machine = s.getOperationsMachineAssignments().get(j)[o];
 					int start = s.getOperationsBeginTimes().get(j)[o];
-					int end = start + fjp.getProcessTimes().get(j)[o][machine];
+					// TODO ProcessTimes might be Integer.MAX_VALUE
+					int end = Integer.MAX_VALUE;
+					if(fjp.getProcessTimes().get(j)[o][machine] < Integer.MAX_VALUE)
+						end = start + fjp.getProcessTimes().get(j)[o][machine];
 					jobschedule.add(new ScheduledOperation(machine, j, o, start, end));
 				}
 				solution.put("Job" + j, jobschedule);
